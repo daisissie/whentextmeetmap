@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="fixed-header">
+    <div class="header-container">
+      <a href="interface.html" style="text-decoration: none; color: inherit;">
+        <h1>
+          <img src="assets/marker_logo-02.png" alt="Logo" style="width:80px; vertical-align:middle; margin-right:10px;">
+          When Text Meets Map
+        </h1>
+      </a>
+      <a href="about.html" style="color: #000; text-decoration: none;">About</a>
+    </div>
+  </header>
+
+  <div class="about_container">
+    <div class="about-main">
+      <h2>About</h2>
+      <p>
+        This project investigates how non-spatial data—specifically memories, diaries, and personal narratives—can be transformed into spatial representations. By mapping subjective, text-based experiences, it reveals hidden patterns and emotional geographies within datasets traditionally viewed as purely textual. Using three iconic books, <em>On the Road</em> by Jack Kerouac, <em>Walden</em> by Henry David Thoreau, and <em>Into the Wild</em> by Jon Krakauer, as data, the project treats literature itself as a form of memory.
+      </p>
+      <p>
+        Memories, whether drawn from oral histories, journals, or photographs, are inherently personal and often blurry. Yet within their subjectivity lies rich insight into how individuals relate to space—what they notice, how they feel, and how places shape their identities. These narratives do more than point to physical locations; they carry emotional and sensory weight, offering a deeper understanding of lived experience and human perception of place.
+      </p>
+      <p>
+        Inspired by the surrealist art game Exquisite Corpse, this interactive map functions like a digital coffee table book. Visitors are invited to click through a landscape of stories, discovering fragmented yet vivid memory-texts. Each entry reveals a moment, a mood, or a scene—sometimes contradictory, sometimes unexpected—emphasizing the layered and diverse ways people engage with space.
+      </p>
+      <p>
+        By treating literature and memory as data, the project opens new modes of spatial storytelling. It encourages us to read the world not just through coordinates, but through the deeply personal experiences that make places meaningful.
+      </p>
+      <h2>Have fun exploring the project—like flipping through a coffee table book of human memory.</h2>
+    </div>
+    <div class="about-methodology">
+      <h2>Methodology</h2>
+      <div class="methodology-image">
+        <img src="assets/Methdology.png" alt="Methodology Diagram" style="max-width: 60%; height: auto;">
+      </div>
+      <p>
+        This project utilizes an integrated pipeline combining Natural Language Processing, GPT analysis, and Google Maps API to extract, geocode, and visualize location data extracted from memoirs. The process involves extracting text from EPUB files, using spaCy for entity recognition, refining the location information with GPT, and finally mapping the coordinates with sentiment analysis as a reflection of the emotional context.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

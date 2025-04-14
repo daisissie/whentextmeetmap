@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="interface-page">
+  <!-- Header Section -->
   <header class="fixed-header">
     <div class="header-container">
       <a href="interface.html" style="text-decoration: none; color: inherit;">
@@ -21,11 +22,11 @@
     </div>
   </header>
 
+  <!-- Main Interface Container -->
   <div class="interface_container">
+    <!-- Data Input Section -->
     <div class="data-input">
-      <p>
-        The literature capture not just physical locations but also the emotional and sensory experiences tied to those places.
-      </p>
+      <p>The literature capture not just physical locations but also the emotional and sensory experiences tied to those places.</p>
       <h2>Data Input</h2>
       <form action="/upload" method="POST" enctype="multipart/form-data">
         <p>On the Road by Jack Kerouac</p>
@@ -40,11 +41,96 @@
       </p>
     </div>
 
+    <!-- Map Section -->
     <div class="map-section">
       <div id="map" style="height: 100%; width: 100%;"></div>
     </div>
   </div>
 
+  <!-- Inline Script: Map Initialization -->
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZGFpc2lzc2llIiwiYSI6ImNtN2Nyb2F3bzB2N3gyam9zenUyamV4eXIifQ.zfJE3IoB71zY8FesqhERag';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      // Using the Mapbox Light style that supports hillshading addition
+      style: 'mapbox://styles/daisissie/cm9giyxae00em01qpbxgwbngl',
+      minZoom: 3,
+      maxBounds: [
+        [-171, 15],
+        [-47, 72]
+      ]
+    });
+
+    map.on('load', () => {
+      // Add DEM source
+      map.addSource('dem', {
+        type: 'raster-dem',
+        url: 'mapbox://mapbox.mapbox-terrain-dem-v1'
+      });
+      // Add hillshade layer below the 'land-structure-polygon' layer
+      map.addLayer({
+        id: 'hillshading',
+        source: 'dem',
+        type: 'hillshade'
+      }, 'land-structure-polygon');
+
+      // Add GeoJSON sources using relative paths
+      map.addSource('hdthoreau_geojson', {
+        type: 'geojson',
+        data: 'geojson_output/locations_HenryDavidThoreau_Walden.geojson'
+      });
+      map.addSource('jackerouac_geojson', {
+        type: 'geojson',
+        data: 'geojson_output/locations_JackKerouac_OntheRoad(1976).geojson'
+      });
+      map.addSource('jonkrakauer_geojson', {
+        type: 'geojson',
+        data: 'geojson_output/locations_JonKrakauer_IntotheWild(2007).geojson'
+      });
+
+      // Load the PNG marker and add it as an image
+      map.loadImage('assets/marker_logo-01.png', function (error, image) {
+        if (error) throw error;
+        map.addImage('custom-marker', image);
+
+        // Add symbol layers for GeoJSON data
+        map.addLayer({
+          id: 'hdthoreau-layer',
+          type: 'symbol',
+          source: 'hdthoreau_geojson',
+          layout: {
+            'icon-image': 'custom-marker',
+            'icon-size': 0.4,
+            'icon-allow-overlap': true
+          }
+        });
+
+        map.addLayer({
+          id: 'jackerouac-layer',
+          type: 'symbol',
+          source: 'jackerouac_geojson',
+          layout: {
+            'icon-image': 'custom-marker',
+            'icon-size': 0.4,
+            'icon-allow-overlap': true
+          }
+        });
+
+        map.addLayer({
+          id: 'jonkrakauer-layer',
+          type: 'symbol',
+          source: 'jonkrakauer_geojson',
+          layout: {
+            'icon-image': 'custom-marker',
+            'icon-size': 0.4,
+            'icon-allow-overlap': true
+          }
+        });
+      });
+    });
+  </script>
+
+  <!-- External JS File -->
   <script src="map.js"></script>
 </body>
 </html>

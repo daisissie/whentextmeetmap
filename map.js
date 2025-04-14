@@ -27,6 +27,15 @@ document.addEventListener('DOMContentLoaded', function () {
       url: 'mapbox://styles/daisissie/cm9ghrif400i901qk45i9dwmu' // Mapbox Terrain DEM source URL
     });
     
+    // Load manifest JSON from geojson_output/manifest.json
+    fetch('geojson_output/manifest.json')
+        .then(response => response.json())
+        .then(manifest => {
+            console.log(manifest);
+            // ...optionally process manifest...
+        })
+        .catch(error => console.error('Error loading manifest:', error));
+
     // Add new GeoJSON sources for the three files
     map.addSource('hdthoreau_geojson', {
       type: 'geojson',

@@ -24,7 +24,7 @@
   <div class="interface_container">
     <div class="data-input">
       <p>
-        The literature, memoirs capture not just physical locations but also the emotional and sensory experiences tied to those places.
+        The literature capture not just physical locations but also the emotional and sensory experiences tied to those places.
       </p>
       <h2>Data Input</h2>
       <form action="/upload" method="POST" enctype="multipart/form-data">
@@ -32,6 +32,12 @@
         <p>Walden by Henry David Thoreau</p>
         <p>Into the Wild by Jon Krakauer</p>
       </form>
+      <p>
+        <label for="file-upload" class="custom-file-upload">
+          <input id="file-upload" type="file" name="file" accept=".txt, .pdf, .docx">
+          Upload File
+        </label>
+      </p>
     </div>
 
     <div class="map-section">

@@ -26,7 +26,8 @@ def csv_to_geojson(csv_file, geojson_file):
                     "LocationName": row.get("LocationName", ""),
                     "context": row.get("Context", ""),
                     "Sentiment": row.get("Sentiment", ""),
-                    "Confidence": row.get("Confidence", "")
+                    "Confidence": row.get("Confidence", ""),
+                    "Literature": row.get("Literature", "")
                 }
             }
             features.append(feature)
@@ -39,13 +40,13 @@ def csv_to_geojson(csv_file, geojson_file):
     print(f"GeoJSON saved to {geojson_file}")
 
 if __name__ == '__main__':
-    input_folder = '/Users/daiyu/Documents/github_mac/colloquium3/csv_output'  # new constant
+    input_folder = '/Users/daiyu/Documents/github_mac/whentextmeetmap/csv_output'  # new constant
     csv_files = [f for f in os.listdir(input_folder) if f.lower().endswith('.csv')]
     if not csv_files:
         print(f"No CSV files found in {input_folder}")
         sys.exit(1)
     
-    output_folder = '/Users/daiyu/Documents/github_mac/colloquium3/geojson_output'
+    output_folder = '/Users/daiyu/Documents/github_mac/whentextmeetmap/geojson_output'
     os.makedirs(output_folder, exist_ok=True)
     
     # Process all CSV files in the input folder

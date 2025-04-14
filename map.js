@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     map.addSource('dem', {
       type: 'raster-dem',
-      url: 'mapbox://mapbox.mapbox-terrain-dem-v1' // Mapbox Terrain DEM source URL
+      url: 'mapbox://styles/daisissie/cm9ghrif400i901qk45i9dwmu' // Mapbox Terrain DEM source URL
     });
     
     // Add new GeoJSON sources for the three files

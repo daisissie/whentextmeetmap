@@ -126,6 +126,42 @@
             'icon-allow-overlap': true
           }
         });
+
+        // Add click event listeners for marker layers to display a styled popup
+        const markerLayers = ['hdthoreau-layer', 'jackerouac-layer', 'jonkrakauer-layer'];
+        markerLayers.forEach(layer => {
+            map.on('click', layer, function(e) {
+                const feature = e.features[0];
+                // Retrieve properties with fallbacks if not present
+                const location = feature.properties.LocationName || "Unknown Location";
+                const context = feature.properties.context || "No context provided.";
+                const literature = feature.properties.Literature || "No literature info.";
+                const sentiment = feature.properties.Sentiment || "No sentiment info.";
+
+                // Build popup HTML with the location as the largest title followed by context, literature, and sentiment
+                const popupHTML = `
+                    <div class="popup-content">
+                        <h2 style="margin: 0 0 8px 0;">${location}</h2>
+                        <p><strong>Context:</strong> ${context}</p>
+                        <p><strong>Literature:</strong> ${literature}</p>
+                        <p><strong>Sentiment:</strong> ${sentiment}</p>
+                    </div>`;
+                
+                // Create and add the popup with a custom class for styling
+                new mapboxgl.Popup({ className: 'my-custom-popup', closeOnClick: true })
+                    .setLngLat(e.lngLat)
+                    .setHTML(popupHTML)
+                    .addTo(map);
+            });
+            
+            // Change the cursor style when hovering over markers
+            map.on('mouseenter', layer, function() {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on('mouseleave', layer, function() {
+                map.getCanvas().style.cursor = '';
+            });
+        });
       });
     });
   </script>

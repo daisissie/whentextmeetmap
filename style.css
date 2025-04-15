@@ -102,3 +102,11 @@ body {
 .interface-page * {
   cursor: url('assets/marker_logo-01.png') 30 30, auto !important;
 }
+
+.my-custom-popup .mapboxgl-popup-content {
+    border: 2px solid #4f2525;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    min-width: 350px;
+}

@@ -25,8 +25,7 @@ contexts = []
 for feature in geo_data.get("features", []):
     properties = feature.get("properties", {})
     context_text = properties.get("context")
-    if context_text:
-        contexts.append(context_text)
+    
 
 if not contexts:
     print("No 'context' fields found in the GeoJSON file.")

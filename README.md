@@ -25,3 +25,13 @@ Extracted Topic Objects:
 9. Road
 10. Camp
 
+1. Freedom and Escape
+2. Road Trips and Physical Journeys
+3. Nature as Solace
+4. Against Materialism
+5. Search for meaning
+6. Identity
+7. Loneliness and Isolation
+8. Counterculture
+9. Time and Presence
+10. Risk

@@ -1,0 +1,294 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -149.3172222,
+          64.4708333
+        ]
+      },
+      "properties": {
+        "LocationName": "Teklanika",
+        "context": "He probably surmised that if he bided his time until August, the Teklanika would subside enough to be crossed.",
+        "Sentiment": "neutral",
+        "Confidence": "100.0%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -99.9018131,
+          43.9695148
+        ]
+      },
+      "properties": {
+        "LocationName": "South Dakota",
+        "context": "In the days following the identification of McCandless’s remains, Wayne Westerberg vaguely recalled that Chris might have purchased some seeds in South Dakota before heading north, including perhaps some potato seeds, with which he intended to plant a vegetable garden after getting established in the bush.",
+        "Sentiment": "neutral",
+        "Confidence": "100.0%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -147.7199756,
+          64.8400511
+        ]
+      },
+      "properties": {
+        "LocationName": "Fairbanks",
+        "context": "“What happens with a lot of legumes,” explains John Bryant, a chemical ecologist at the University of Alaska in Fairbanks, “is that the plants concentrate alkaloids in the seed coats in late summer, to discourage animals from eating their seeds.",
+        "Sentiment": "neutral",
+        "Confidence": "93.0%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -149.9138193835182,
+          64.03049769203305
+        ]
+      },
+      "properties": {
+        "LocationName": "the Sushana River",
+        "context": "”During my visit to the Sushana River, I collected samples of H. alpinum growing within a few feet of the bus and sent seed pods from this sample to Tom Clausen, a colleague of Professor Bryant’s in the Chemistry Department at the University of Alaska.",
+        "Sentiment": "neutral",
+        "Confidence": "96.0%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -149.9138193835182,
+          64.03049769203305
+        ]
+      },
+      "properties": {
+        "LocationName": "Sushana River",
+        "context": ", it would have alerted him to the existence of a Park Service cabin on the upper Sushana River, six miles due south of the bus, a distance he might have been able to cover even in his severely weakened state.",
+        "Sentiment": "neutral",
+        "Confidence": "87.2%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -150.7893981,
+          63.2827613
+        ]
+      },
+      "properties": {
+        "LocationName": "Denali National Park",
+        "context": "And although they aren’t marked on the map, two miles even closer to the bus are a pair of private cabins—one owned by the well-known Healy dog mushers Will and Linda Forsberg; the other, by an employee of Denali National Park, Steve Carwile—where there should have been some food as well.",
+        "Sentiment": "neutral",
+        "Confidence": "95.9%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -150.7893981,
+          63.2827613
+        ]
+      },
+      "properties": {
+        "LocationName": "Denali National Park",
+        "context": "The damage wasn’t discovered until late July, when a wildlife biologist named Paul Atkinson made the grueling ten-mile bushwhack over the Outer Range, from the road into Denali National Park to the Park Service shelter.",
+        "Sentiment": "neutral",
+        "Confidence": "91.2%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -154.4930619,
+          63.588753
+        ]
+      },
+      "properties": {
+        "LocationName": "Alaska",
+        "context": "One of his last acts was to take a picture of himself, standing near the bus under the high Alaska sky, one hand holding his final note toward the camera lens, the other raised in a brave, beatific farewell.",
+        "Sentiment": "neutral",
+        "Confidence": "78.3%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -149.0058333,
+          63.7730556
+        ]
+      },
+      "properties": {
+        "LocationName": "Mt. Healy",
+        "context": "helicopter labors upward, thwock-thwock-thwocking over the shoulder of Mt. Healy. As the altimeter needle brushes five thousand feet, we crest a mud-colored ridge, the earth drops away, and a breathtaking sweep of taiga fills the Plexiglas windscreen.",
+        "Sentiment": "neutral",
+        "Confidence": "91.9%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.53365389999999,
+          38.6947907
+        ]
+      },
+      "properties": {
+        "LocationName": "Chesapeake Beach",
+        "context": "Ten hard months have passed since Sam McCandless appeared at their Chesapeake Beach doorstep to tell them Chris was dead.",
+        "Sentiment": "neutral",
+        "Confidence": "75.9%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -147.7199756,
+          64.8400511
+        ]
+      },
+      "properties": {
+        "LocationName": "Fairbanks",
+        "context": "Walt has spent the past ten days in Fairbanks, doing contract work for NASA, developing an airborne radar system for search-and-rescue missions that will enable searchers to find the wreckage of a downed plane amid thousands of acres of densely forested country.",
+        "Sentiment": "neutral",
+        "Confidence": "100.0%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -154.4930619,
+          63.588753
+        ]
+      },
+      "properties": {
+        "LocationName": "Alaska",
+        "context": "Billie, who arrived in Alaska two days ago, confided to me that the prospect of visiting the bus has been difficult for him to come to terms with.",
+        "Sentiment": "neutral",
+        "Confidence": "84.7%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -149.3172222,
+          64.4708333
+        ]
+      },
+      "properties": {
+        "LocationName": "the Teklanika River",
+        "context": "But yesterday Killian called their hotel to say that the Teklanika River was still running high—too high, he worried, to cross safely, even with his amphibious, eight-wheeled Argo.",
+        "Sentiment": "neutral",
+        "Confidence": "78.5%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -149.3172222,
+          64.4708333
+        ]
+      },
+      "properties": {
+        "LocationName": "Teklanika",
+        "context": "The Teklanika appears as a long brown ribbon thrown carelessly across the land. An unnaturally bright object comes into view near the confluence of two smaller streams: Fairbanks bus 142.",
+        "Sentiment": "neutral",
+        "Confidence": "84.6%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.3952109,
+          46.5374764
+        ]
+      },
+      "properties": {
+        "LocationName": "the Upper Peninsula",
+        "context": "Oh, Walt, it looks just like the Upper Peninsula! Chris must have loved being here",
+        "Sentiment": "neutral",
+        "Confidence": "66.0%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -154.4930619,
+          63.588753
+        ]
+      },
+      "properties": {
+        "LocationName": "Alaska",
+        "context": "”“I have a lot of reasons for disliking Alaska, OK?” Walt answers, scowling. “But I admit it—the place has a certain beauty.",
+        "Sentiment": "neutral",
+        "Confidence": "60.0%",
+        "Literature": "Into the Wild"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -149.9138193835182,
+          64.03049769203305
+        ]
+      },
+      "properties": {
+        "LocationName": "the Sushana River",
+        "context": "Walt and Billie walk quietly around the decrepit vehicle, amble down to the Sushana River, visit the nearby woods.",
+        "Sentiment": "neutral",
+        "Confidence": "100.0%",
+        "Literature": "Into the Wild"
+      }
+    }
+  ]
+}

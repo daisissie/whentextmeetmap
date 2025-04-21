@@ -26,21 +26,32 @@
   <div class="interface_container">
     <!-- Data Input Section -->
     <div class="data-input">
-      <p>The literature capture not just physical locations but also the emotional and sensory experiences tied to those places.</p>
+      <p>Literature as Data</p>
       <h2>Data Input</h2>
       <form action="/upload" method="POST" enctype="multipart/form-data">
         <p>On the Road by Jack Kerouac</p>
         <p>Walden by Henry David Thoreau</p>
         <p>Into the Wild by Jon Krakauer</p>
       </form>
-      <p>
-        <label for="file-upload" class="custom-file-upload">
-          <input id="file-upload" type="file" name="file" accept=".txt, .pdf, .docx">
-          Upload File
-        </label>
-      </p>
+      
+      <!-- Category Filters -->
+      <div class="categories-filter">
+        <h2>Filter Categories</h2>
+        <div class="filters">
+          <div><label><input type="checkbox" id="filter-bus" checked> Bus</label></div>
+          <div><label><input type="checkbox" id="filter-river" checked> River</label></div>
+          <div><label><input type="checkbox" id="filter-mountain" checked> Mountain</label></div>
+          <div><label><input type="checkbox" id="filter-wilderness" checked> Wilderness</label></div>
+          <div><label><input type="checkbox" id="filter-trail" checked> Trail</label></div>
+          <div><label><input type="checkbox" id="filter-lake" checked> Lake</label></div>
+          <div><label><input type="checkbox" id="filter-forest" checked> Forest</label></div>
+          <div><label><input type="checkbox" id="filter-desert" checked> Desert</label></div>
+          <div><label><input type="checkbox" id="filter-road" checked> Road</label></div>
+          <div><label><input type="checkbox" id="filter-camp" checked> Camp</label></div>
+        </div>
+      </div>
+      
     </div>
-
     <!-- Map Section -->
     <div class="map-section">
       <div id="map" style="height: 100%; width: 100%;"></div>
@@ -74,99 +85,106 @@
         type: 'hillshade'
       }, 'land-structure-polygon');
 
-      // Add GeoJSON sources using relative paths
-      map.addSource('hdthoreau_geojson', {
+      // Combined GeoJSON source
+      map.addSource('combined', {
         type: 'geojson',
-        data: 'geojson_output/locations_HenryDavidThoreau_Walden.geojson'
+        data: 'geojson_output/output_test.geojson'
       });
-      map.addSource('jackerouac_geojson', {
-        type: 'geojson',
-        data: 'geojson_output/locations_JackKerouac_OntheRoad(1976).geojson'
-      });
-      map.addSource('jonkrakauer_geojson', {
-        type: 'geojson',
-        data: 'geojson_output/locations_JonKrakauer_IntotheWild(2007).geojson'
-      });
-
-      // Load the PNG marker and add it as an image
-      map.loadImage('assets/marker_logo-01.png', function (error, image) {
+      // Load custom marker image
+      map.loadImage('assets/marker_logo-01.png', (error, image) => {
         if (error) throw error;
         map.addImage('custom-marker', image);
-
-        // Add symbol layers for GeoJSON data
-        map.addLayer({
-          id: 'hdthoreau-layer',
-          type: 'symbol',
-          source: 'hdthoreau_geojson',
-          layout: {
-            'icon-image': 'custom-marker',
-            'icon-size': 0.4,
-            'icon-allow-overlap': true
-          }
-        });
-
-        map.addLayer({
-          id: 'jackerouac-layer',
-          type: 'symbol',
-          source: 'jackerouac_geojson',
-          layout: {
-            'icon-image': 'custom-marker',
-            'icon-size': 0.4,
-            'icon-allow-overlap': true
-          }
-        });
-
-        map.addLayer({
-          id: 'jonkrakauer-layer',
-          type: 'symbol',
-          source: 'jonkrakauer_geojson',
-          layout: {
-            'icon-image': 'custom-marker',
-            'icon-size': 0.4,
-            'icon-allow-overlap': true
-          }
-        });
-
-        // Add click event listeners for marker layers to display a styled popup
-        const markerLayers = ['hdthoreau-layer', 'jackerouac-layer', 'jonkrakauer-layer'];
-        markerLayers.forEach(layer => {
-            map.on('click', layer, function(e) {
-                const feature = e.features[0];
-                // Retrieve properties with fallbacks if not present
-                const location = feature.properties.LocationName || "Unknown Location";
-                const context = feature.properties.context || "No context provided.";
-                const literature = feature.properties.Literature || "No literature info.";
-                const sentiment = feature.properties.Sentiment || "No sentiment info.";
-
-                // Build popup HTML with the location as the largest title followed by context, literature, and sentiment
-                const popupHTML = `
-                    <div class="popup-content">
-                        <h2 style="margin: 0 0 8px 0;">${location}</h2>
-                        <p><strong>Context:</strong> ${context}</p>
-                        <p><strong>Literature:</strong> ${literature}</p>
-                        <p><strong>Sentiment:</strong> ${sentiment}</p>
-                    </div>`;
-                
-                // Create and add the popup with a custom class for styling
-                new mapboxgl.Popup({ className: 'my-custom-popup', closeOnClick: true })
-                    .setLngLat(e.lngLat)
-                    .setHTML(popupHTML)
-                    .addTo(map);
-            });
-            
-            // Change the cursor style when hovering over markers
-            map.on('mouseenter', layer, function() {
-                map.getCanvas().style.cursor = 'pointer';
-            });
-            map.on('mouseleave', layer, function() {
-                map.getCanvas().style.cursor = '';
-            });
-        });
       });
+      // Combined symbol layer
+      map.addLayer({
+        id: 'combined-layer',
+        type: 'symbol',
+        source: 'combined',
+        layout: {
+          'icon-image': 'custom-marker',
+          'icon-size': 0.4,
+          'icon-allow-overlap': true
+        },
+        filter: ['any',
+          ['==', ['get', 'bus', ['get', 'topics']], true],
+          ['==', ['get', 'river', ['get', 'topics']], true],
+          ['==', ['get', 'mountain', ['get', 'topics']], true],
+          ['==', ['get', 'wilderness', ['get', 'topics']], true],
+          ['==', ['get', 'trail', ['get', 'topics']], true],
+          ['==', ['get', 'lake', ['get', 'topics']], true],
+          ['==', ['get', 'forest', ['get', 'topics']], true],
+          ['==', ['get', 'desert', ['get', 'topics']], true],
+          ['==', ['get', 'road', ['get', 'topics']], true],
+          ['==', ['get', 'camp', ['get', 'topics']], true]
+        ]
+      });
+
+      // Update marker layer logic
+      const markerLayers = ['combined-layer'];
+
+      // Add click event listeners for marker layers to display a styled popup
+      markerLayers.forEach(layer => {
+          map.on('click', layer, function(e) {
+              const feature = e.features[0];
+              // Retrieve properties with fallbacks if not present
+              const location = feature.properties.LocationName || "Unknown Location";
+              const context = feature.properties.context || "No context provided.";
+              // Highlight the location name within the context text
+              const highlightedContext = context.replace(
+                new RegExp(location, 'g'),
+                `<mark>${location}</mark>`
+              );
+              const literature = feature.properties.Literature || "No literature info.";
+              const sentiment = feature.properties.Sentiment || "No sentiment info.";
+
+              // Build popup HTML with the location as the largest title followed by context, literature, and sentiment
+              const popupHTML = `
+                  <div class="popup-content">
+                      <h2 style="margin: 0 0 8px 0;">${location}</h2>
+                      <p><strong>Context:</strong> ${highlightedContext}</p>
+                      <p><strong>Literature:</strong> ${literature}</p>
+                      <p><strong>Sentiment:</strong> ${sentiment}</p>
+                  </div>`;
+              
+              // Create and add the popup with a custom class for styling
+              new mapboxgl.Popup({ className: 'my-custom-popup', closeOnClick: true })
+                  .setLngLat(e.lngLat)
+                  .setHTML(popupHTML)
+                  .addTo(map);
+          });
+          
+          // Change the cursor style when hovering over markers
+          map.on('mouseenter', layer, function() {
+              map.getCanvas().style.cursor = 'pointer';
+          });
+          map.on('mouseleave', layer, function() {
+              map.getCanvas().style.cursor = '';
+          });
+      });
+
+      // Category filter controls
+      const categories = ['bus','river','mountain','wilderness','trail','lake','forest','desert','road','camp'];
+      categories.forEach(cat => {
+        document.getElementById(`filter-${cat}`).addEventListener('change', updateFilters);
+      });
+      function updateFilters() {
+        const activeCats = categories.filter(cat => document.getElementById(`filter-${cat}`).checked);
+        if (activeCats.length === 0) {
+          // Hide all if none selected
+          map.setFilter('combined-layer', ['in', 'id', '']);
+        } else {
+          const filterExpr = ['any'];
+          activeCats.forEach(cat => {
+            filterExpr.push(['==', ['get', cat, ['get', 'topics']], true]);
+          });
+          map.setFilter('combined-layer', filterExpr);
+        }
+      }
+      // Initialize filters on load
+      updateFilters();
     });
   </script>
 
   <!-- External JS File -->
-  <script src="map.js"></script>
 </body>
 </html>

@@ -7,6 +7,13 @@
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.11.0/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.11.0/mapbox-gl.js"></script>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Limit popup height and make it scrollable */
+    .my-custom-popup .mapboxgl-popup-content {
+      max-height: 250px;
+      overflow-y: auto;
+    }
+  </style>
 </head>
 <body class="interface-page">
   <!-- Header Section -->
@@ -48,6 +55,7 @@
           <div><label><input type="checkbox" id="filter-desert" checked> Desert</label></div>
           <div><label><input type="checkbox" id="filter-road" checked> Road</label></div>
           <div><label><input type="checkbox" id="filter-camp" checked> Camp</label></div>
+          <div><label><input type="checkbox" id="filter-none"> None</label></div>
         </div>
       </div>
       
@@ -70,6 +78,13 @@
         [-171, 15],
         [-47, 72]
       ]
+    });
+
+    // Create a single popup instance to reuse on each click
+    const popup = new mapboxgl.Popup({
+      className: 'my-custom-popup',
+      closeOnClick: true,
+      maxWidth: '400px'
     });
 
     map.on('load', () => {
@@ -134,52 +149,58 @@
       // Add click event listeners for marker layers to display a styled popup
       markerLayers.forEach(layer => {
           map.on('click', layer, function(e) {
-              const feature = e.features[0];
-              // Retrieve properties with fallbacks if not present
-              const location = feature.properties.LocationName || "Unknown Location";
-              const context = feature.properties.context || "No context provided.";
-              // Highlight the location name within the context text
-              const highlightedContext = context.replace(
-                new RegExp(location, 'g'),
-                `<mark>${location}</mark>`
-              );
-              const literature = feature.properties.Literature || "No literature info.";
-              const sentiment = feature.properties.Sentiment || "No sentiment info.";
-              const confidence = feature.properties.Confidence || "No confidence info.";
-              // Compute a color from red to green based on confidence percentage
-              let confValue = parseFloat(confidence);
-              let confColor = '#888888'; // default gray if parse fails
-              if (!isNaN(confValue)) {
-                let ratio = Math.min(Math.max(confValue / 100, 0), 1);
-                let red = Math.round(255 * (1 - ratio));
-                let green = Math.round(255 * ratio);
-                confColor = `rgb(${red},${green},0)`;
-              }
-              const topics = feature.properties.topics || {};
-              const categoryList = Object.entries(topics)
-                .filter(([key, value]) => value === true)
-                .map(([key]) => key)
-                .join(', ') || 'None';
+              // Gather all features sharing this location name
+              const clickedLocation = e.features[0].properties.LocationName || "Unknown Location";
+              const featuresAtLocation = map.querySourceFeatures('combined', {
+                filter: ['==', ['get', 'LocationName'], clickedLocation]
+              });
 
-              // Build popup HTML with the location as the largest title followed by context, literature, and sentiment
+              // Build HTML entries for each feature at this location
+              let entriesHTML = featuresAtLocation.map(f => {
+                const ctx = f.properties.context || "No context provided.";
+                // Highlight every occurrence of the location name within the context
+                const highlightedCtx = ctx.replace(new RegExp(clickedLocation, 'g'), `<mark>${clickedLocation}</mark>`);
+                const lit = f.properties.Literature || "No literature info.";
+                const sent = f.properties.Sentiment || "No sentiment info.";
+                const conf = f.properties.Confidence || "No confidence info.";
+                // Compute confidence color
+                let confVal = parseFloat(conf);
+                let confColor = '#888888';
+                if (!isNaN(confVal)) {
+                  let ratio = Math.min(Math.max(confVal / 100, 0), 1);
+                  let red = Math.round(255 * (1 - ratio));
+                  let green = Math.round(255 * ratio);
+                  confColor = `rgb(${red},${green},0)`;
+                }
+                const tops =  JSON.parse(f.properties.topics) || {};
+                // Pick only the first true topic, or "None" if none are true
+                const firstTopic = Object.keys(tops).find(key => tops[key] === true);
+                const category = firstTopic || 'None';
+                return `
+                  <div class="entry" style="margin-bottom:10px;">
+                    <p><strong>Context:</strong> ${highlightedCtx}</p>
+                    <p><strong>Literature:</strong> ${lit}</p>
+                    <p><strong>Sentiment:</strong> ${sent}</p>
+                    <p><strong>Confidence:</strong>
+                      <span style="display:inline-block;width:12px;height:12px;background-color:${confColor};margin-right:6px;border:1px solid #000;"></span>
+                      ${conf}
+                    </p>
+                    <p><strong>Category:</strong> ${category}</p>
+                  </div>`;
+              }).join('');
+
+              // Set popup HTML with aggregated entries
               const popupHTML = `
                   <div class="popup-content">
-                      <h2 style="margin: 0 0 8px 0;">${location}</h2>
-                      <p><strong>Context:</strong> ${highlightedContext}</p>
-                      <p><strong>Literature:</strong> ${literature}</p>
-                      <p><strong>Sentiment:</strong> ${sentiment}</p>
-                      <p><strong>Confidence:</strong>
-                        <span style="display:inline-block;width:12px;height:12px;background-color:${confColor};margin-right:6px;border:1px solid #000;"></span>
-                        ${confidence}
-                      </p>
-                      <p><strong>Category/Topic:</strong> ${categoryList}</p>
+                    <h2 style="margin: 0 0 8px 0;">${clickedLocation}</h2>
+                    ${entriesHTML}
                   </div>`;
               
-              // Create and add the popup with a custom class for styling
-              new mapboxgl.Popup({ className: 'my-custom-popup', closeOnClick: true, maxWidth: '400px' })
-                  .setLngLat(e.lngLat)
-                  .setHTML(popupHTML)
-                  .addTo(map);
+              // Reuse the same popup instance
+              popup
+                .setLngLat(e.lngLat)
+                .setHTML(popupHTML)
+                .addTo(map);
           });
           
           // Change the cursor style when hovering over markers
@@ -192,7 +213,7 @@
       });
 
       // Category filter controls
-      const categories = ['bus','river','mountain','wilderness','trail','lake','forest','desert','road','camp'];
+      const categories = ['bus','river','mountain','wilderness','trail','lake','forest','desert','road','camp','none'];
       categories.forEach(cat => {
         document.getElementById(`filter-${cat}`).addEventListener('change', updateFilters);
       });
@@ -204,7 +225,23 @@
         } else {
           const filterExpr = ['any'];
           activeCats.forEach(cat => {
-            filterExpr.push(['==', ['get', cat, ['get', 'topics']], true]);
+            if (cat === 'none') {
+              // Features with no true topics
+              filterExpr.push(['!', ['any',
+                ['==', ['get', 'bus', ['get', 'topics']], true],
+                ['==', ['get', 'river', ['get', 'topics']], true],
+                ['==', ['get', 'mountain', ['get', 'topics']], true],
+                ['==', ['get', 'wilderness', ['get', 'topics']], true],
+                ['==', ['get', 'trail', ['get', 'topics']], true],
+                ['==', ['get', 'lake', ['get', 'topics']], true],
+                ['==', ['get', 'forest', ['get', 'topics']], true],
+                ['==', ['get', 'desert', ['get', 'topics']], true],
+                ['==', ['get', 'road', ['get', 'topics']], true],
+                ['==', ['get', 'camp', ['get', 'topics']], true]
+              ]]);
+            } else {
+              filterExpr.push(['==', ['get', cat, ['get', 'topics']], true]);
+            }
           });
           map.setFilter('combined-layer', filterExpr);
         }

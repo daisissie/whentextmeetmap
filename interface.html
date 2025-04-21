@@ -82,7 +82,13 @@
       map.addLayer({
         id: 'hillshading',
         source: 'dem',
-        type: 'hillshade'
+        type: 'hillshade',
+        paint: {
+          'hillshade-shadow-color': '#000000',
+          'hillshade-highlight-color': '#777777',
+          'hillshade-accent-color': '#555555',
+          'hillshade-exaggeration': 1
+        }
       }, 'land-structure-polygon');
 
       // Combined GeoJSON source
@@ -94,29 +100,32 @@
       map.loadImage('assets/marker_logo-01.png', (error, image) => {
         if (error) throw error;
         map.addImage('custom-marker', image);
-      });
-      // Combined symbol layer
-      map.addLayer({
-        id: 'combined-layer',
-        type: 'symbol',
-        source: 'combined',
-        layout: {
-          'icon-image': 'custom-marker',
-          'icon-size': 0.4,
-          'icon-allow-overlap': true
-        },
-        filter: ['any',
-          ['==', ['get', 'bus', ['get', 'topics']], true],
-          ['==', ['get', 'river', ['get', 'topics']], true],
-          ['==', ['get', 'mountain', ['get', 'topics']], true],
-          ['==', ['get', 'wilderness', ['get', 'topics']], true],
-          ['==', ['get', 'trail', ['get', 'topics']], true],
-          ['==', ['get', 'lake', ['get', 'topics']], true],
-          ['==', ['get', 'forest', ['get', 'topics']], true],
-          ['==', ['get', 'desert', ['get', 'topics']], true],
-          ['==', ['get', 'road', ['get', 'topics']], true],
-          ['==', ['get', 'camp', ['get', 'topics']], true]
-        ]
+
+        // Combined symbol layer
+        map.addLayer({
+          id: 'combined-layer',
+          type: 'symbol',
+          source: 'combined',
+          layout: {
+            'icon-image': 'custom-marker',
+            'icon-size': 0.4,
+            'icon-allow-overlap': true
+          },
+          filter: ['any',
+            ['==', ['get', 'bus', ['get', 'topics']], true],
+            ['==', ['get', 'river', ['get', 'topics']], true],
+            ['==', ['get', 'mountain', ['get', 'topics']], true],
+            ['==', ['get', 'wilderness', ['get', 'topics']], true],
+            ['==', ['get', 'trail', ['get', 'topics']], true],
+            ['==', ['get', 'lake', ['get', 'topics']], true],
+            ['==', ['get', 'forest', ['get', 'topics']], true],
+            ['==', ['get', 'desert', ['get', 'topics']], true],
+            ['==', ['get', 'road', ['get', 'topics']], true],
+            ['==', ['get', 'camp', ['get', 'topics']], true]
+          ]
+        });
+        
+        updateFilters();
       });
 
       // Update marker layer logic
@@ -136,6 +145,21 @@
               );
               const literature = feature.properties.Literature || "No literature info.";
               const sentiment = feature.properties.Sentiment || "No sentiment info.";
+              const confidence = feature.properties.Confidence || "No confidence info.";
+              // Compute a color from red to green based on confidence percentage
+              let confValue = parseFloat(confidence);
+              let confColor = '#888888'; // default gray if parse fails
+              if (!isNaN(confValue)) {
+                let ratio = Math.min(Math.max(confValue / 100, 0), 1);
+                let red = Math.round(255 * (1 - ratio));
+                let green = Math.round(255 * ratio);
+                confColor = `rgb(${red},${green},0)`;
+              }
+              const topics = feature.properties.topics || {};
+              const categoryList = Object.entries(topics)
+                .filter(([key, value]) => value === true)
+                .map(([key]) => key)
+                .join(', ') || 'None';
 
               // Build popup HTML with the location as the largest title followed by context, literature, and sentiment
               const popupHTML = `
@@ -144,10 +168,15 @@
                       <p><strong>Context:</strong> ${highlightedContext}</p>
                       <p><strong>Literature:</strong> ${literature}</p>
                       <p><strong>Sentiment:</strong> ${sentiment}</p>
+                      <p><strong>Confidence:</strong>
+                        <span style="display:inline-block;width:12px;height:12px;background-color:${confColor};margin-right:6px;border:1px solid #000;"></span>
+                        ${confidence}
+                      </p>
+                      <p><strong>Category/Topic:</strong> ${categoryList}</p>
                   </div>`;
               
               // Create and add the popup with a custom class for styling
-              new mapboxgl.Popup({ className: 'my-custom-popup', closeOnClick: true })
+              new mapboxgl.Popup({ className: 'my-custom-popup', closeOnClick: true, maxWidth: '400px' })
                   .setLngLat(e.lngLat)
                   .setHTML(popupHTML)
                   .addTo(map);
@@ -180,8 +209,6 @@
           map.setFilter('combined-layer', filterExpr);
         }
       }
-      // Initialize filters on load
-      updateFilters();
     });
   </script>
 

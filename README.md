@@ -1,6 +1,5 @@
 # whentextmeetmap
 
-
 Top ten topics:
 1. Nature and wilderness adventures in Alaska
 2. Journeys and road trips across different states
@@ -37,3 +36,4 @@ Extracted Topic Objects:
 8. Counterculture
 9. Time and Presence
 10. Risk
+11. Family

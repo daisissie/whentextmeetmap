@@ -111,37 +111,65 @@
         type: 'geojson',
         data: 'geojson_output/output_test.geojson'
       });
-      // Load custom marker image
-      map.loadImage('assets/marker_logo-01.png', (error, image) => {
-        if (error) throw error;
-        map.addImage('custom-marker', image);
 
-        // Combined symbol layer
-        map.addLayer({
-          id: 'combined-layer',
-          type: 'symbol',
-          source: 'combined',
-          layout: {
-            'icon-image': 'custom-marker',
-            'icon-size': 0.4,
-            'icon-allow-overlap': true
-          },
-          filter: ['any',
-            ['==', ['get', 'bus', ['get', 'topics']], true],
-            ['==', ['get', 'river', ['get', 'topics']], true],
-            ['==', ['get', 'mountain', ['get', 'topics']], true],
-            ['==', ['get', 'wilderness', ['get', 'topics']], true],
-            ['==', ['get', 'trail', ['get', 'topics']], true],
-            ['==', ['get', 'lake', ['get', 'topics']], true],
-            ['==', ['get', 'forest', ['get', 'topics']], true],
-            ['==', ['get', 'desert', ['get', 'topics']], true],
-            ['==', ['get', 'road', ['get', 'topics']], true],
-            ['==', ['get', 'camp', ['get', 'topics']], true]
-          ]
+      // Load icons for each category
+      const categoryIcons = [
+        { name: 'bus', url: 'assets/icon-1-01.png' },
+        { name: 'river', url: 'assets/icon-1-02.png' },
+        { name: 'mountain', url: 'assets/icon-1-03.png' },
+        { name: 'wilderness', url: 'assets/icon-1-04.png' },
+        { name: 'trail', url: 'assets/icon-1-05.png' },
+        { name: 'lake', url: 'assets/icon-1-06.png' },
+        { name: 'forest', url: 'assets/icon-1-07.png' },
+        { name: 'desert', url: 'assets/icon-1-08.png' },
+        { name: 'road', url: 'assets/icon-1-09.png' },
+        { name: 'camp', url: 'assets/icon-1-10.png' }
+      ];
+      categoryIcons.forEach(icon => {
+        map.loadImage(icon.url, (error, image) => {
+          if (error) throw error;
+          map.addImage(`${icon.name}-icon`, image);
         });
-        
-        updateFilters();
       });
+
+      // Combined symbol layer
+      map.addLayer({
+        id: 'combined-layer',
+        type: 'symbol',
+        source: 'combined',
+        layout: {
+          'icon-image': [
+            'case',
+            ['==', ['get', 'bus', ['get', 'topics']], true], 'bus-icon',
+            ['==', ['get', 'river', ['get', 'topics']], true], 'river-icon',
+            ['==', ['get', 'mountain', ['get', 'topics']], true], 'mountain-icon',
+            ['==', ['get', 'wilderness', ['get', 'topics']], true], 'wilderness-icon',
+            ['==', ['get', 'trail', ['get', 'topics']], true], 'trail-icon',
+            ['==', ['get', 'lake', ['get', 'topics']], true], 'lake-icon',
+            ['==', ['get', 'forest', ['get', 'topics']], true], 'forest-icon',
+            ['==', ['get', 'desert', ['get', 'topics']], true], 'desert-icon',
+            ['==', ['get', 'road', ['get', 'topics']], true], 'road-icon',
+            ['==', ['get', 'camp', ['get', 'topics']], true], 'camp-icon',
+            'custom-marker' // fallback icon
+          ],
+          'icon-size': 0.4,
+          'icon-allow-overlap': true
+        },
+        filter: ['any',
+          ['==', ['get', 'bus', ['get', 'topics']], true],
+          ['==', ['get', 'river', ['get', 'topics']], true],
+          ['==', ['get', 'mountain', ['get', 'topics']], true],
+          ['==', ['get', 'wilderness', ['get', 'topics']], true],
+          ['==', ['get', 'trail', ['get', 'topics']], true],
+          ['==', ['get', 'lake', ['get', 'topics']], true],
+          ['==', ['get', 'forest', ['get', 'topics']], true],
+          ['==', ['get', 'desert', ['get', 'topics']], true],
+          ['==', ['get', 'road', ['get', 'topics']], true],
+          ['==', ['get', 'camp', ['get', 'topics']], true]
+        ]
+      });
+      
+      updateFilters();
 
       // Update marker layer logic
       const markerLayers = ['combined-layer'];

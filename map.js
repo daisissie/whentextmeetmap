@@ -117,11 +117,11 @@ map.on('load', () => {
             
             return `
                 <div class="entry" style="margin-bottom:10px;">
+                    <hr style="border: 0; height: 1px; background: #ccc; margin: 10px 0;">
                     <p><strong>Context:</strong> ${highlightedCtx}</p>
                     <p><strong>Literature:</strong> ${lit}</p>
                     <p><strong>Object:</strong> ${firstTopic}</p>
                     <p><strong>Theme:</strong> ${firstTopic}</p>
-
                 </div>`;
         }).join('');
 

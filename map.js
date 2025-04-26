@@ -5,10 +5,13 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGFpc2lzc2llIiwiYSI6ImNtN2Nyb2F3bzB2N3gyam9ze
 const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/daisissie/cm9giyxae00em01qpbxgwbngl',
-    minZoom: 3,
+    minZoom: 0,
+    maxZoom: 12,
+    zoom: 2.5, // Initial zoom level to show both Alaska and continental US
+    center: [-140, 45], // Centered between Alaska and continental US
     maxBounds: [
-        [-171, 15],
-        [-47, 72]
+        [-180, 20], // Southwest coordinates [lng, lat] - includes Alaska
+        [-65, 72]  // Northeast coordinates [lng, lat] - covers northern Alaska
     ]
 });
 
@@ -59,11 +62,26 @@ const categoryIcons = [
 // Categories for filtering
 const categories = ['bus', 'river', 'mountain', 'wilderness', 'trail', 'lake', 'forest', 'desert', 'road', 'camp', 'none'];
 
+// Add themes for filtering
+const themes = [
+    'freedom_and_escape',
+    'road_trips_and_physical_journeys',
+    'nature_as_solace',
+    'against_materialism',
+    'search_for_meaning',
+    'identity',
+    'loneliness_and_isolation',
+    'counterculture',
+    'time_and_presence',
+    'risk',
+    'family'
+];
+
 map.on('load', () => {
     // Add GeoJSON source
     map.addSource('combined', {
         type: 'geojson',
-        data: 'geojson_output/output_test.geojson'
+        data: 'output_final.geojson'
     });
 
     // Load category icons
@@ -113,15 +131,27 @@ map.on('load', () => {
             const highlightedCtx = ctx.replace(new RegExp(clickedLocation, 'g'), `<mark>${clickedLocation}</mark>`);
             const lit = f.properties.Literature || "No literature info.";
             const topics = JSON.parse(f.properties.topics || "{}");
-            const firstTopic = Object.keys(topics).find(key => topics[key] === true) || 'None';
+            const themes = JSON.parse(f.properties.themes || "{}");
+            
+            // Get all true topics
+            const activeTopics = Object.entries(topics)
+                .filter(([_, value]) => value === true)
+                .map(([key]) => key.replace(/_/g, ' '))
+                .join(', ') || 'None';
+
+            // Get all true themes
+            const activeThemes = Object.entries(themes)
+                .filter(([_, value]) => value === true)
+                .map(([key]) => key.replace(/_/g, ' '))
+                .join(', ') || 'None';
             
             return `
                 <div class="entry" style="margin-bottom:10px;">
                     <hr style="border: 0; height: 1px; background: #ccc; margin: 10px 0;">
                     <p><strong>Context:</strong> ${highlightedCtx}</p>
                     <p><strong>Literature:</strong> ${lit}</p>
-                    <p><strong>Object:</strong> ${firstTopic}</p>
-                    <p><strong>Theme:</strong> ${firstTopic}</p>
+                    <p><strong>Objects:</strong> ${activeTopics}</p>
+                    <p><strong>Themes:</strong> ${activeThemes}</p>
                 </div>`;
         }).join('');
 
@@ -152,6 +182,14 @@ map.on('load', () => {
             checkbox.addEventListener('change', updateFilters);
         }
     });
+
+    // Set up theme filters
+    themes.forEach(theme => {
+        const checkbox = document.getElementById(`filter-${theme}`);
+        if (checkbox) {
+            checkbox.addEventListener('change', updateFilters);
+        }
+    });
 });
 
 // Filter update function
@@ -160,21 +198,42 @@ function updateFilters() {
         document.getElementById(`filter-${cat}`)?.checked
     );
 
-    if (activeCats.length === 0) {
+    const activeThemes = themes.filter(theme =>
+        document.getElementById(`filter-${theme}`)?.checked
+    );
+
+    if (activeCats.length === 0 && activeThemes.length === 0) {
         map.setFilter('combined-layer', ['in', 'id', '']);
-    } else {
-        const filterExpr = ['any'];
+        return;
+    }
+
+    const filterExpr = ['all'];
+    
+    // Add topic filters if any are selected
+    if (activeCats.length > 0) {
+        const topicFilter = ['any'];
         activeCats.forEach(cat => {
             if (cat === 'none') {
-                filterExpr.push(['!', ['any',
+                topicFilter.push(['!', ['any',
                     ...categories
                         .filter(c => c !== 'none')
                         .map(c => ['==', ['get', c, ['get', 'topics']], true])
                 ]]);
             } else {
-                filterExpr.push(['==', ['get', cat, ['get', 'topics']], true]);
+                topicFilter.push(['==', ['get', cat, ['get', 'topics']], true]);
             }
         });
-        map.setFilter('combined-layer', filterExpr);
+        filterExpr.push(topicFilter);
     }
+
+    // Add theme filters if any are selected
+    if (activeThemes.length > 0) {
+        const themeFilter = ['any'];
+        activeThemes.forEach(theme => {
+            themeFilter.push(['==', ['get', theme, ['get', 'themes']], true]);
+        });
+        filterExpr.push(themeFilter);
+    }
+
+    map.setFilter('combined-layer', filterExpr);
 } 

@@ -7,25 +7,19 @@
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.11.0/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.11.0/mapbox-gl.js"></script>
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Limit popup height and make it scrollable */
-    .my-custom-popup .mapboxgl-popup-content {
-      max-height: 250px;
-      overflow-y: auto;
-    }
-  </style>
+
 </head>
 <body class="interface-page">
   <!-- Header Section -->
   <header class="fixed-header">
     <div class="header-container">
-      <a href="interface.html" style="text-decoration: none; color: inherit;">
-        <h1>
-          <img src="assets/marker_logo-02.png" alt="Logo" style="width:80px; vertical-align:middle; margin-right:10px;">
-          When Text Meets Map
-        </h1>
-      </a>
-      <a href="about.html">About</a>
+      <div class="header-left">
+        <img src="assets/marker_logo-02.png" alt="Logo" class="header-logo">
+        <a href="index.html" class="title-button">
+          <h1>When Text Meets Map</h1>
+        </a>
+      </div>
+      <a href="about.html" class="about-button">About</a>
     </div>
   </header>
 
@@ -34,6 +28,7 @@
     <!-- Data Input Section -->
     <div class="data-input">
       <p>Literature as Data</p>
+      <p>Explore stories by place instead of page</p>
       <h2>Data Input</h2>
       <form action="/upload" method="POST" enctype="multipart/form-data">
         <p>On the Road by Jack Kerouac</p>
@@ -43,19 +38,19 @@
       
       <!-- Category Filters -->
       <div class="categories-filter">
-        <h2>Filter Categories</h2>
+        <h2>Theme Filter</h2>
         <div class="filters">
-          <div><label><input type="checkbox" id="filter-bus" checked> Bus</label></div>
-          <div><label><input type="checkbox" id="filter-river" checked> River</label></div>
-          <div><label><input type="checkbox" id="filter-mountain" checked> Mountain</label></div>
-          <div><label><input type="checkbox" id="filter-wilderness" checked> Wilderness</label></div>
-          <div><label><input type="checkbox" id="filter-trail" checked> Trail</label></div>
-          <div><label><input type="checkbox" id="filter-lake" checked> Lake</label></div>
-          <div><label><input type="checkbox" id="filter-forest" checked> Forest</label></div>
-          <div><label><input type="checkbox" id="filter-desert" checked> Desert</label></div>
-          <div><label><input type="checkbox" id="filter-road" checked> Road</label></div>
-          <div><label><input type="checkbox" id="filter-camp" checked> Camp</label></div>
-          <div><label><input type="checkbox" id="filter-none" checked> None</label></div>
+          <div><label><input type="checkbox" id="filter-freedom_and_escape" checked> Freedom and Escape</label></div>
+          <div><label><input type="checkbox" id="filter-road_trips_and_physical_journeys" checked> Road Trips and Physical Journeys</label></div>
+          <div><label><input type="checkbox" id="filter-nature_as_solace" checked> Nature as Solace</label></div>
+          <div><label><input type="checkbox" id="filter-against_materialism" checked> Against Materialism</label></div>
+          <div><label><input type="checkbox" id="filter-search_for_meaning" checked> Search for meaning</label></div>
+          <div><label><input type="checkbox" id="filter-identity" checked> Identity</label></div>
+          <div><label><input type="checkbox" id="filter-loneliness_and_isolation" checked> Loneliness and Isolation</label></div>
+          <div><label><input type="checkbox" id="filter-counterculture" checked> Counterculture</label></div>
+          <div><label><input type="checkbox" id="filter-time_and_presence" checked> Time and Presence</label></div>
+          <div><label><input type="checkbox" id="filter-risk" checked> Risk</label></div>
+          <div><label><input type="checkbox" id="filter-family" checked> Family</label></div>
         </div>
       </div>
       

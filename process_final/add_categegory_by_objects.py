@@ -8,8 +8,8 @@ if not openai.api_key:
     raise ValueError("The OPENAI_API_KEY environment variable is not set.")
 
 # Set the path to your GeoJSON file
-GEOJSON_FILE_PATH = "geojson_output/combined.geojson"  # <-- Update this path accordingly
-OUTPUT_GEOJSON_FILE_PATH = "output_test.geojson"  # <-- Update this output path if necessary
+GEOJSON_FILE_PATH = "geojson_output/output_test.geojson"  # <-- Update this path accordingly
+OUTPUT_GEOJSON_FILE_PATH = "output_object.geojson"  # <-- Update this output path if necessary
 
 # Define the list of topics to check; this is used as a fallback.
 TOPICS = ["bus", "river", "mountain", "wilderness", "trail", "lake", "forest", "desert", "road", "camp"]

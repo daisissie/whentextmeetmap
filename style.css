@@ -28,45 +28,106 @@ body {
   position: sticky;
   top: 0;
   width: 100%;
-  background-color: #666d53;
+  background-color: #EBDFC3;
   z-index: 100;
-  padding: 10px 0;
+  padding: 5px 0;
 }
 
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 5px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  width: 80px;
+  height: auto;
+}
+
+/* Title Button Styling */
+.title-button {
+  padding: 10px 20px;
+  background-color: #4f2525;
+  color: #EBDFC3;
+  border: 2px solid #4f2525;
+  border-radius: 15px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-family: 'Gendy', 'Gendy Modern Sans', sans-serif;
+}
+
+.title-button:hover {
+  background-color: #EBDFC3;
+  color: #4f2525;
+  border: 2px solid #4f2525;
+}
+
+.title-button h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 3px;
+}
+
+/* About Button Styling */
+.about-button {
+  padding: 10px 20px;
+  background-color: #4f2525;
+  color: #EBDFC3;
+  border: 2px solid #4f2525;
+  border-radius: 15px;
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  font-family: 'Gendy', 'Gendy Modern Sans', sans-serif;
+}
+
+.about-button:hover {
+  background-color: #EBDFC3;
+  color: #4f2525;
+  border: 2px solid #4f2525;
 }
 
 /* Interface Page Specific Styles */
 .interface-page {
   overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .interface-page .interface_container {
   display: flex;
+  flex: 1;
   width: 100%;
-  height: calc(100vh - 60px); /* full viewport height minus header */
-  flex-direction: row;
+  padding: 10px;
+  box-sizing: border-box;
+  gap: 10px;
 }
 
 .data-input {
   flex: 0 0 20%;
-  padding: 20px;
-  background-color: #f9f9f9;
+  padding: 15px;
+  background-color: #EBDFC3;
   box-sizing: border-box;
   overflow-y: auto;
-  border: 2px solid #4f2525;
+  border: 5px solid #4f2525;
   border-radius: 15px;
+  height: calc(100% - 20px);
 }
 
 .map-section {
   flex: 0 0 80%;
   padding: 0;
   box-sizing: border-box;
-  height: 100%;
+  height: calc(100% - 20px);
   border: 5px solid #4f2525;
   border-radius: 15px;
   overflow: hidden;
@@ -106,7 +167,11 @@ body {
 .my-custom-popup .mapboxgl-popup-content {
     border: 2px solid #4f2525;
     border-radius: 10px;
-    padding: 10px;
+    background-color: #f1ebdc;
+    padding: 20px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    min-width: 350px;
+    min-width: 550px;
+    min-height: 450px;
+    max-height: 250px;
+    overflow-y: auto;
 }

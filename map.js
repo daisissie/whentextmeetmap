@@ -46,16 +46,16 @@ const popup = new mapboxgl.Popup({
 
 // Category icons configuration
 const categoryIcons = [
-    { name: 'bus', url: 'assets/icon-1-01.png' },
-    { name: 'river', url: 'assets/icon-1-02.png' },
-    { name: 'mountain', url: 'assets/icon-1-03.png' },
-    { name: 'wilderness', url: 'assets/icon-1-04.png' },
-    { name: 'trail', url: 'assets/icon-1-05.png' },
-    { name: 'lake', url: 'assets/icon-1-06.png' },
-    { name: 'forest', url: 'assets/icon-1-07.png' },
-    { name: 'desert', url: 'assets/icon-1-08.png' },
-    { name: 'road', url: 'assets/icon-1-09.png' },
-    { name: 'camp', url: 'assets/icon-1-10.png' },
+    { name: 'bus', url: 'assets/icon-01.png' },
+    { name: 'river', url: 'assets/icon-02.png' },
+    { name: 'mountain', url: 'assets/icon-03.png' },
+    { name: 'wilderness', url: 'assets/icon-04.png' },
+    { name: 'trail', url: 'assets/icon-05.png' },
+    { name: 'lake', url: 'assets/icon-06.png' },
+    { name: 'forest', url: 'assets/icon-07.png' },
+    { name: 'desert', url: 'assets/icon-08.png' },
+    { name: 'road', url: 'assets/icon-09.png' },
+    { name: 'camp', url: 'assets/icon-10.png' },
     { name: 'none', url: 'assets/marker_logo-01.png' }
 ];
 

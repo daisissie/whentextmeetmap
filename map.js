@@ -94,6 +94,27 @@ map.on('load', () => {
 
     // Add symbol layer for markers
     map.addLayer({
+        id: 'circle-background',
+        type: 'circle',
+        source: 'combined',
+        paint: {
+            'circle-color': '#ffffff',
+            'circle-opacity': 0.2,
+            'circle-radius': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                0, 4,    // 0.4 × 10px
+                4, 5,    // 0.5 × 10px
+                8, 12,   // 1.2 × 10px
+                12, 20   // 2.0 × 10px
+            ],
+            'circle-stroke-width': 0.3,
+            'circle-stroke-color': '#ffffff'
+        }
+    });
+
+    map.addLayer({
         id: 'combined-layer',
         type: 'symbol',
         source: 'combined',
@@ -117,13 +138,10 @@ map.on('load', () => {
                 'interpolate',
                 ['linear'],
                 ['zoom'],
-                0, 0.2,    // At zoom level 0, icons are 0.2x size
-                2, 0.3,    // At zoom level 2, icons are 0.3x size
-                4, 0.4,    // At zoom level 4, icons are 0.4x size
-                6, 0.5,    // At zoom level 6, icons are 0.5x size
-                8, 0.6,    // At zoom level 8, icons are 0.6x size
-                10, 0.7,   // At zoom level 10, icons are 0.7x size
-                12, 0.8    // At zoom level 12, icons are 0.8x size
+                0, 0.4,    // At zoom level 0, icons are 0.4x size
+                4, 0.5,    // At zoom level 4, icons are 0.5x size
+                8, 1.2,    // At zoom level 8, icons are 1.2x size
+                12, 2    // At zoom level 12, icons are 2x size
             ],
             'icon-allow-overlap': true
         }

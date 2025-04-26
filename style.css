@@ -107,9 +107,9 @@ body {
   display: flex;
   flex: 1;
   width: 100%;
-  padding: 10px;
+  padding: 10px 15px 2px 10px;
   box-sizing: border-box;
-  gap: 10px;
+  gap: 5px;
 }
 
 .data-input {
@@ -120,14 +120,14 @@ body {
   overflow-y: auto;
   border: 5px solid #4f2525;
   border-radius: 15px;
-  height: calc(100% - 20px);
+  height: calc(100% - 5px);
 }
 
 .map-section {
   flex: 0 0 80%;
   padding: 0;
   box-sizing: border-box;
-  height: calc(100% - 20px);
+  height: calc(100% - 5px);
   border: 5px solid #4f2525;
   border-radius: 15px;
   overflow: hidden;
@@ -174,4 +174,69 @@ body {
     min-height: 450px;
     max-height: 250px;
     overflow-y: auto;
+}
+
+.mapboxgl-ctrl-logo {
+  display: none !important;
+}
+
+.mapboxgl-ctrl-bottom-right {
+  display: none !important;
+}
+
+.mapboxgl-ctrl-bottom-left {
+  display: none !important;
+}
+
+.mapboxgl-ctrl-attrib-inner {
+  display: none !important;
+}
+
+.mapboxgl-ctrl-attrib {
+  display: none !important;
+}
+
+.mapboxgl-control-container {
+  display: none !important;
+}
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #4f2525;
+  border-radius: 3px;
+  margin-right: 8px;
+  position: relative;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #4f2525;
+}
+
+input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  color: #EBDFC3;
+  font-size: 14px;
+  left: 2px;
+  top: -2px;
+}
+
+.filters label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  cursor: pointer;
+  padding-top: 8px;
+  border-top: 1px solid #4f2525;
+}
+
+.filters label:first-child {
+  border-top: none;
+  padding-top: 0;
 }

@@ -32,7 +32,7 @@ map.on('style.load', () => {
             'hillshade-shadow-color': '#000000',
             'hillshade-highlight-color': '#777777',
             'hillshade-accent-color': '#555555',
-            'hillshade-exaggeration': 0.5
+            'hillshade-exaggeration': 0.8
         }
     }, 'land-structure-polygon'); // Insert hillshading below the land structure layer
 });
@@ -113,7 +113,18 @@ map.on('load', () => {
                 ['==', ['get', 'none', ['get', 'topics']], true], 'none-icon',
                 'none-icon' // fallback icon
             ],
-            'icon-size': 0.4,
+            'icon-size': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                0, 0.2,    // At zoom level 0, icons are 0.2x size
+                2, 0.3,    // At zoom level 2, icons are 0.3x size
+                4, 0.4,    // At zoom level 4, icons are 0.4x size
+                6, 0.5,    // At zoom level 6, icons are 0.5x size
+                8, 0.6,    // At zoom level 8, icons are 0.6x size
+                10, 0.7,   // At zoom level 10, icons are 0.7x size
+                12, 0.8    // At zoom level 12, icons are 0.8x size
+            ],
             'icon-allow-overlap': true
         }
     });
@@ -125,35 +136,48 @@ map.on('load', () => {
             filter: ['==', ['get', 'LocationName'], clickedLocation]
         });
 
+        // Track unique contexts to avoid duplicates
+        const seenContexts = new Set();
+        
         // Build popup content
-        let entriesHTML = featuresAtLocation.map(f => {
-            const ctx = f.properties.context || "No context provided.";
-            const highlightedCtx = ctx.replace(new RegExp(clickedLocation, 'g'), `<mark>${clickedLocation}</mark>`);
-            const lit = f.properties.Literature || "No literature info.";
-            const topics = JSON.parse(f.properties.topics || "{}");
-            const themes = JSON.parse(f.properties.themes || "{}");
-            
-            // Get all true topics
-            const activeTopics = Object.entries(topics)
-                .filter(([_, value]) => value === true)
-                .map(([key]) => key.replace(/_/g, ' '))
-                .join(', ') || 'None';
+        let entriesHTML = featuresAtLocation
+            .filter(f => {
+                const ctx = f.properties.context || "No context provided.";
+                // Only keep entries with contexts we haven't seen before
+                if (seenContexts.has(ctx)) {
+                    return false;
+                }
+                seenContexts.add(ctx);
+                return true;
+            })
+            .map(f => {
+                const ctx = f.properties.context || "No context provided.";
+                const highlightedCtx = ctx.replace(new RegExp(clickedLocation, 'g'), `<mark>${clickedLocation}</mark>`);
+                const lit = f.properties.Literature || "No literature info.";
+                const topics = JSON.parse(f.properties.topics || "{}");
+                const themes = JSON.parse(f.properties.themes || "{}");
+                
+                // Get all true topics
+                const activeTopics = Object.entries(topics)
+                    .filter(([_, value]) => value === true)
+                    .map(([key]) => key.replace(/_/g, ' '))
+                    .join(', ') || 'None';
 
-            // Get all true themes
-            const activeThemes = Object.entries(themes)
-                .filter(([_, value]) => value === true)
-                .map(([key]) => key.replace(/_/g, ' '))
-                .join(', ') || 'None';
-            
-            return `
-                <div class="entry" style="margin-bottom:10px;">
-                    <hr style="border: 0; height: 1px; background: #ccc; margin: 10px 0;">
-                    <p><strong>Context:</strong> ${highlightedCtx}</p>
-                    <p><strong>Literature:</strong> ${lit}</p>
-                    <p><strong>Objects:</strong> ${activeTopics}</p>
-                    <p><strong>Themes:</strong> ${activeThemes}</p>
-                </div>`;
-        }).join('');
+                // Get all true themes
+                const activeThemes = Object.entries(themes)
+                    .filter(([_, value]) => value === true)
+                    .map(([key]) => key.replace(/_/g, ' '))
+                    .join(', ') || 'None';
+                
+                return `
+                    <div class="entry" style="margin-bottom:10px;">
+                        <hr style="border: 0; height: 1px; background: #ccc; margin: 10px 0;">
+                        <p><strong>Context:</strong> ${highlightedCtx}</p>
+                        <p><strong>Literature:</strong> ${lit}</p>
+                        <p><strong>Objects:</strong> ${activeTopics}</p>
+                        <p><strong>Themes:</strong> ${activeThemes}</p>
+                    </div>`;
+            }).join('');
 
         const popupHTML = `
             <div class="popup-content">

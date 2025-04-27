@@ -6,12 +6,12 @@ const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/daisissie/cm9giyxae00em01qpbxgwbngl',
     minZoom: 0,
-    maxZoom: 12,
-    zoom: 2.5, // Initial zoom level to show both Alaska and continental US
-    center: [-140, 45], // Centered between Alaska and continental US
+    maxZoom: 7.5,
+    zoom: 3.2, // Adjusted zoom level if necessary
+    center: [-110, 50], // Adjusted center for continental USA
     maxBounds: [
-        [-180, 20], // Southwest coordinates [lng, lat] - includes Alaska
-        [-65, 72]  // Northeast coordinates [lng, lat] - covers northern Alaska
+        [-150, 22], // Southwest coordinates
+        [-62, 70]   // Northeast coordinates
     ]
 });
 
@@ -278,4 +278,4 @@ function updateFilters() {
     }
 
     map.setFilter('combined-layer', filterExpr);
-} 
+}

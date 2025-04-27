@@ -99,15 +99,15 @@ map.on('load', () => {
         source: 'combined',
         paint: {
             'circle-color': '#ffffff',
-            'circle-opacity': 0.2,
+            'circle-opacity': 0.4,
             'circle-radius': [
                 'interpolate',
                 ['linear'],
                 ['zoom'],
-                0, 4,    // 0.4 × 10px
-                4, 5,    // 0.5 × 10px
-                8, 12,   // 1.2 × 10px
-                12, 20   // 2.0 × 10px
+                0, 20,     // At zoom level 0, radius is 4px
+                4, 12,     // At zoom level 4, radius is 6px
+                8, 10,     // At zoom level 8, radius is 8px
+                12, 40    // At zoom level 12, radius is 10px
             ],
             'circle-stroke-width': 0.3,
             'circle-stroke-color': '#ffffff'
@@ -138,10 +138,10 @@ map.on('load', () => {
                 'interpolate',
                 ['linear'],
                 ['zoom'],
-                0, 0.4,    // At zoom level 0, icons are 0.4x size
-                4, 0.5,    // At zoom level 4, icons are 0.5x size
-                8, 1.2,    // At zoom level 8, icons are 1.2x size
-                12, 2    // At zoom level 12, icons are 2x size
+                0, 0.4,    // At zoom level 0, icons are 0.3x size
+                4, 0.5,    // At zoom level 4, icons are 0.4x size
+                8, 1.2,    // At zoom level 8, icons are 0.5x size
+                12, 2    // At zoom level 12, icons are 0.6x size
             ],
             'icon-allow-overlap': true
         }

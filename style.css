@@ -43,11 +43,18 @@ body {
 .header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-left: auto;
 }
 
 .header-logo {
-  width: 80px;
+  width: 100px;
   height: auto;
 }
 
@@ -270,3 +277,25 @@ input[type="checkbox"]:checked::after {
   border-top: none;
   padding-top: 0;
 }
+
+.toggle-button {
+  margin-bottom: 15px;
+  padding: 8px 15px;
+  background-color: #4f2525;
+  color: #EBDFC3;
+  border: 2px solid #4f2525;
+  border-radius: 15px;
+  cursor: pointer;
+  font-family: 'Gendy', 'Gendy Modern Sans', sans-serif;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.toggle-button:hover {
+  background-color: #EBDFC3;
+  color: #4f2525;
+}
+
+
+/* Right side of header: About button and credit */

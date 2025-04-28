@@ -1,12 +1,15 @@
 // Mapbox access token
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGFpc2lzc2llIiwiYSI6ImNtN2Nyb2F3bzB2N3gyam9zenUyamV4eXIifQ.zfJE3IoB71zY8FesqhERag';
 
+// Global flag for toggling point visibility
+let showAllPoints = false;
+
 // Initialize map
 const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/daisissie/cm9giyxae00em01qpbxgwbngl',
     minZoom: 0,
-    maxZoom: 7.5,
+    maxZoom: 12,
     zoom: 3.2, // Adjusted zoom level if necessary
     center: [-110, 50], // Adjusted center for continental USA
     maxBounds: [
@@ -61,6 +64,21 @@ const categoryIcons = [
 
 // Categories for filtering
 const categories = ['bus', 'river', 'mountain', 'wilderness', 'trail', 'lake', 'forest', 'desert', 'road', 'camp', 'none'];
+
+// Theme categories (match the checkboxes in index.html)
+const themeCategories = [
+    'freedom_and_escape',
+    'road_trips_and_physical_journeys',
+    'nature_as_solace',
+    'against_materialism',
+    'search_for_meaning',
+    'identity',
+    'loneliness_and_isolation',
+    'counterculture',
+    'time_and_presence',
+    'risk',
+    'family'
+];
 
 // Add themes for filtering
 const themes = [
@@ -149,14 +167,14 @@ map.on('load', async () => {
                     0, 20,     // At zoom level 0, radius is 4px
                     4, 12,     // At zoom level 4, radius is 6px
                     8, 40,     // At zoom level 8, radius is 8px
-                    12, 100    // At zoom level 12, radius is 10px
+                    12, 55    // At zoom level 12, radius is 10px
                 ],
                 'circle-stroke-width': 0.3,
                 'circle-stroke-color': '#ffffff'
             }
         });
 
-        // Create a layer for each category instead of a combined layer
+        // Create a layer for each category
         categories.forEach(cat => {
             map.addLayer({
                 id: `${cat}-layer`,
@@ -171,7 +189,7 @@ map.on('load', async () => {
                         0, 0.4,
                         4, 0.5,
                         8, 1.2,
-                        12, 2
+                        12, 1.5
                     ],
                     'icon-allow-overlap': true
                 },
@@ -211,6 +229,77 @@ map.on('load', async () => {
                 map.getCanvas().style.cursor = 'pointer';
             });
             map.on('mouseleave', `${cat}-layer`, () => {
+                map.getCanvas().style.cursor = '';
+            });
+        });
+
+        // Create a symbol layer for each theme and tie it to its checkbox
+        themeCategories.forEach(theme => {
+            // Add a layer for this theme
+            map.addLayer({
+                id: `${theme}-theme-layer`,
+                type: 'symbol',
+                source: 'combined',
+                layout: {
+                    // Dynamically select topic icon based on the feature's topics object
+                    'icon-image': [
+                        'case',
+                        ['==', ['get', 'bus', ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]], true], 'bus-icon',
+                        ['==', ['get', 'river', ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]], true], 'river-icon',
+                        ['==', ['get', 'mountain', ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]], true], 'mountain-icon',
+                        ['==', ['get', 'wilderness', ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]], true], 'wilderness-icon',
+                        ['==', ['get', 'trail', ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]], true], 'trail-icon',
+                        ['==', ['get', 'lake', ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]], true], 'lake-icon',
+                        ['==', ['get', 'forest', ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]], true], 'forest-icon',
+                        ['==', ['get', 'desert', ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]], true], 'desert-icon',
+                        ['==', ['get', 'road', ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]], true], 'road-icon',
+                        ['==', ['get', 'camp', ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]], true], 'camp-icon',
+                        // Fallback if no topic matched
+                        'none-icon'
+                    ],
+                    'icon-size': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        0, 0.4,
+                        4, 0.5,
+                        8, 1.2,
+                        12, 1.5
+                    ],
+                    'icon-allow-overlap': true
+                },
+                filter: [
+                    '==',
+                    ['get', theme, ['coalesce', ['object', ['get', 'themes']], ['literal', {}]]],
+                    true
+                ]
+            });
+
+            // Initialize layer hidden
+            map.setLayoutProperty(`${theme}-theme-layer`, 'visibility', 'none');
+
+            // Tie checkbox to layer visibility
+            const checkbox = document.getElementById(`filter-${theme}`);
+            if (checkbox) {
+                checkbox.addEventListener('change', () => {
+                    map.setLayoutProperty(
+                        `${theme}-theme-layer`,
+                        'visibility',
+                        checkbox.checked ? 'visible' : 'none'
+                    );
+                });
+            }
+
+            // Add click event for theme layer to show popup
+            map.on('click', `${theme}-theme-layer`, (e) => {
+                const clickedLocation = e.features[0].properties.LocationName || "Unknown Location";
+                handlePopup(e, clickedLocation);
+            });
+            // Change cursor on hover for theme layer
+            map.on('mouseenter', `${theme}-theme-layer`, () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on('mouseleave', `${theme}-theme-layer`, () => {
                 map.getCanvas().style.cursor = '';
             });
         });
@@ -262,6 +351,9 @@ map.on('load', async () => {
                     .filter(([_, category]) => category === cat)
                     .map(([location, _]) => location);
 
+                // Ensure layer is visible when showing all points
+                map.setLayoutProperty(layerId, 'visibility', 'visible');
+
                 map.setFilter(layerId, [
                     'all',
                     ['has', 'topics'],
@@ -270,11 +362,70 @@ map.on('load', async () => {
             });
         }
 
-        // Call updateLayerVisibility initially and when the source data changes
+        // Update hideAllPoints to also clear filters
+        function hideAllPoints() {
+            categories.forEach(cat => {
+                const layerId = `${cat}-layer`;
+                map.setLayoutProperty(layerId, 'visibility', 'none');
+                map.setFilter(layerId, ['in', 'id', '']);
+            });
+        }
+
+        // Apply theme-only filtering when points are hidden
+        function applyThemeFilter() {
+            const selectedThemes = themes.filter(theme =>
+                document.getElementById(`filter-${theme}`)?.checked
+            );
+            const noneSelected = document.getElementById('filter-none-theme')?.checked;
+            // If no themes selected and none-theme not selected, hide all
+            if (selectedThemes.length === 0 && !noneSelected) {
+                categories.forEach(cat => {
+                    map.setLayoutProperty(`${cat}-layer`, 'visibility', 'none');
+                });
+                return;
+            }
+            categories.forEach(cat => {
+                const layerId = `${cat}-layer`;
+                // Topic filter for this category
+                const topicFilter = cat === 'none'
+                    ? ['all',
+                        ['has','topics'],
+                        ['all',
+                            ...categories
+                                .filter(c => c !== 'none')
+                                .map(c => ['!=',['get', c, ['coalesce',['object',['get','topics']],['literal',{}]]], true])
+                        ]
+                      ]
+                    : ['to-boolean',['get', cat, ['coalesce',['object',['get','topics']],['literal',{}]]]];
+                // Build theme filter parts
+                let filterParts = [];
+                selectedThemes.forEach(theme => {
+                    filterParts.push(['==',['get', theme, ['coalesce',['object',['get','themes']],['literal',{}]]], true]);
+                });
+                if (noneSelected) {
+                    // all themes false
+                    filterParts = themes.map(theme =>
+                        ['!=',['get', theme, ['coalesce',['object',['get','themes']],['literal',{}]]], true]
+                    );
+                }
+                const themeFilter = ['any', ...filterParts];
+                // Combine filters
+                const combinedFilter = ['all', ['has','topics'], topicFilter, themeFilter];
+                map.setLayoutProperty(layerId, 'visibility', 'visible');
+                map.setFilter(layerId, combinedFilter);
+            });
+        }
+
+        // Call updateLayerVisibility initially
         updateLayerVisibility();
+        // Only re-display points when showAllPoints is true, otherwise re-hide
         map.on('sourcedata', (e) => {
             if (e.sourceId === 'combined' && e.isSourceLoaded) {
-                updateLayerVisibility();
+                if (showAllPoints) {
+                    updateLayerVisibility();
+                } else {
+                    hideAllPoints();
+                }
             }
         });
 
@@ -339,6 +490,76 @@ map.on('load', async () => {
                 .addTo(map);
         }
 
+        // Modify the toggle button functionality
+        const toggleButton = document.getElementById('toggle-all-themes');
+
+        // hideAllPoints is now defined above with filter clearing
+
+        function showPoints() {
+            // Show points based on current theme filters
+            const activeThemes = themes.filter(theme => 
+                document.getElementById(`filter-${theme}`)?.checked
+            );
+            
+            if (activeThemes.length === 0) {
+                updateLayerVisibility(); // Show all points if no themes selected
+            } else {
+                updateFilters(); // Show filtered points
+            }
+        }
+
+        toggleButton.addEventListener('click', () => {
+            showAllPoints = !showAllPoints;
+            toggleButton.textContent = showAllPoints ? 'Hide All Points' : 'Show All Points';
+            if (showAllPoints) {
+                updateLayerVisibility();
+            } else {
+                hideAllPoints();
+            }
+        });
+
+        // Initialize with all themes unchecked and points hidden
+        themes.forEach(theme => {
+            const checkbox = document.getElementById(`filter-${theme}`);
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+        });
+
+        // Initially hide all points
+        categories.forEach(cat => {
+            const layer = `${cat}-layer`;
+            map.setFilter(layer, ['in', 'id', '']);
+        });
+
+        // Modify theme checkbox event listeners so toggling any theme
+        // forces the map into the hidden-all state and applies the theme filter persistently
+        themes.forEach(theme => {
+            const checkbox = document.getElementById(`filter-${theme}`);
+            if (checkbox) {
+                checkbox.addEventListener('change', () => {
+                    // Enter hidden state and apply theme filter
+                    showAllPoints = false;
+                    toggleButton.textContent = 'Show All Points';
+                    applyThemeFilter();
+                });
+            }
+        });
+        const noneThemeCheckbox = document.getElementById('filter-none-theme');
+        if (noneThemeCheckbox) {
+            noneThemeCheckbox.addEventListener('change', () => {
+                showAllPoints = false;
+                toggleButton.textContent = 'Show All Points';
+                applyThemeFilter();
+            });
+        }
+
+        // Initialize state: show all points and set button label accordingly
+        showAllPoints = true;
+        toggleButton.textContent = 'Hide All Points';
+        // Initially display all points
+        updateLayerVisibility();
+
     } catch (error) {
         console.error('Failed to load one or more images:', error);
     }
@@ -351,51 +572,4 @@ map.on('load', async () => {
         }
     });
 
-    // Set up theme filters
-    themes.forEach(theme => {
-        const checkbox = document.getElementById(`filter-${theme}`);
-        if (checkbox) {
-            checkbox.addEventListener('change', updateFilters);
-        }
-    });
 });
-
-// Filter update function
-function updateFilters() {
-    const activeThemes = themes.filter(theme =>
-        document.getElementById(`filter-${theme}`)?.checked
-    );
-
-    categories.forEach(cat => {
-        const isActive = document.getElementById(`filter-${cat}`)?.checked;
-        const layer = `${cat}-layer`;
-        
-        if (!isActive) {
-            map.setFilter(layer, ['in', 'id', '']);
-            return;
-        }
-
-        const filterExpr = [
-            'all',
-            ['has', 'topics'],
-            [
-                'to-boolean',
-                ['get', cat, ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]]
-            ]
-        ];
-
-        // Add theme filters if any are selected
-        if (activeThemes.length > 0) {
-            const themeFilter = ['any'];
-            activeThemes.forEach(theme => {
-                themeFilter.push([
-                    'to-boolean',
-                    ['get', theme, ['coalesce', ['object', ['get', 'themes']], ['literal', {}]]]
-                ]);
-            });
-            filterExpr.push(themeFilter);
-        }
-
-        map.setFilter(layer, filterExpr);
-    });
-}

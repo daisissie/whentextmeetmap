@@ -19,7 +19,13 @@
           <h1>When Text Meets Map</h1>
         </a>
       </div>
-      <a href="about.html" class="about-button">About</a>
+      <div class="header-right">
+        <a href="about.html" class="about-button header-about">About</a>
+        <div class="author-credit">
+          <p>Developed by </p>
+          <p>Yuxi Dai (Sissie)</p>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -27,36 +33,37 @@
   <div class="interface_container">
     <!-- Data Input Section -->
     <div class="data-input">
-      <p>Literature as Data</p>
+      <h2>Literature as Data</h2>
       <p>Explore stories by place instead of page</p>
       <h2>Data Input</h2>
       <form action="/upload" method="POST" enctype="multipart/form-data">
-        <p>On the Road by Jack Kerouac</p>
-        <p>Walden by Henry David Thoreau</p>
-        <p>Into the Wild by Jon Krakauer</p>
+        
+          <p style="font-size: 0.8em; white-space: nowrap;"><strong>On the Road</strong> by Jack Kerouac</p>
+          <p style="font-size: 0.8em; white-space: nowrap;"><strong>Walden</strong> by Henry David Thoreau</p>
+          <p style="font-size: 0.8em; white-space: nowrap;"><strong>Into the Wild</strong> by Jon Krakauer</p>
+        
       </form>
       
       <!-- Category Filters -->
       <div class="categories-filter">
         <h2>Theme Filter</h2>
+        <button id="toggle-all-themes" class="toggle-button">Show All Points</button>
         <div class="filters">
-          <div><label><input type="checkbox" id="filter-freedom_and_escape" checked> Freedom and Escape</label></div>
-          <div><label><input type="checkbox" id="filter-road_trips_and_physical_journeys" checked> Road Trips and Physical Journeys</label></div>
-          <div><label><input type="checkbox" id="filter-nature_as_solace" checked> Nature as Solace</label></div>
-          <div><label><input type="checkbox" id="filter-against_materialism" checked> Against Materialism</label></div>
-          <div><label><input type="checkbox" id="filter-search_for_meaning" checked><span>Search for Meaning</span></label></div>
-          <div><label><input type="checkbox" id="filter-identity" checked> Identity</label></div>
-          <div><label><input type="checkbox" id="filter-loneliness_and_isolation" checked> Loneliness and Isolation</label></div>
-          <div><label><input type="checkbox" id="filter-counterculture" checked> Counterculture</label></div>
-          <div><label><input type="checkbox" id="filter-time_and_presence" checked> Time and Presence</label></div>
-          <div><label><input type="checkbox" id="filter-risk" checked> Risk</label></div>
-          <div><label><input type="checkbox" id="filter-family" checked> Family</label></div>
+          <div><label><input type="checkbox" id="filter-freedom_and_escape"> Freedom and Escape</label></div>
+          <div><label><input type="checkbox" id="filter-road_trips_and_physical_journeys"> Road Trips and Physical Journeys</label></div>
+          <div><label><input type="checkbox" id="filter-nature_as_solace"> Nature as Solace</label></div>
+          <div><label><input type="checkbox" id="filter-against_materialism"> Against Materialism</label></div>
+          <div><label><input type="checkbox" id="filter-search_for_meaning"><span>Search for Meaning</span></label></div>
+          <div><label><input type="checkbox" id="filter-identity"> Identity</label></div>
+          <div><label><input type="checkbox" id="filter-loneliness_and_isolation"> Loneliness and Isolation</label></div>
+          <div><label><input type="checkbox" id="filter-counterculture"> Counterculture</label></div>
+          <div><label><input type="checkbox" id="filter-time_and_presence"> Time and Presence</label></div>
+          <div><label><input type="checkbox" id="filter-risk"> Risk</label></div>
+          <div><label><input type="checkbox" id="filter-family"> Family</label></div>
+          <div><label><input type="checkbox" id="filter-none-theme"> No Theme</label></div>
         </div>
       </div>
-
-      <div class="author-credit">
-        <p>Developed by Yuxi Dai (Sissie)</p>
-      </div>
+      
     </div>
     <!-- Map Section -->
     <div class="map-section">

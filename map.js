@@ -41,7 +41,7 @@ map.on('style.load', () => {
 const popup = new mapboxgl.Popup({
     className: 'my-custom-popup',
     closeOnClick: true,
-    maxWidth: '400px'
+    maxWidth: '350px' // Updated to make the popup box shorter
 });
 
 // Category icons configuration
@@ -68,7 +68,7 @@ const themes = [
     'road_trips_and_physical_journeys',
     'nature_as_solace',
     'against_materialism',
-    'search_for_meaning',
+    'search_for_meaning',  // This must match exactly with the HTML id (without 'filter-' prefix)
     'identity',
     'loneliness_and_isolation',
     'counterculture',
@@ -77,145 +77,271 @@ const themes = [
     'family'
 ];
 
-map.on('load', () => {
+// Add simple hash function before map.on('load')
+function getRandomSeed() {
+    return Math.floor(Math.random() * 1000000);
+}
+
+const randomSeed = getRandomSeed();
+
+function hashString(str) {
+    let hash = randomSeed; // Start with random seed
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    return Math.abs(hash);
+}
+
+map.on('load', async () => {
     // Add GeoJSON source
     map.addSource('combined', {
         type: 'geojson',
         data: 'output_final.geojson'
     });
 
-    // Load category icons
-    categoryIcons.forEach(icon => {
-        map.loadImage(icon.url, (error, image) => {
-            if (error) throw error;
-            map.addImage(`${icon.name}-icon`, image);
-        });
-    });
+    // Wait for all icons to load before adding layers
+    try {
+        await Promise.all(categoryIcons.map(icon => {
+            return new Promise((resolve, reject) => {
+                map.loadImage(icon.url, (error, image) => {
+                    if (error) {
+                        console.error(`Error loading ${icon.name}-icon:`, error);
+                        reject(error);
+                    } else {
+                        try {
+                            if (!map.hasImage(`${icon.name}-icon`)) {
+                                map.addImage(`${icon.name}-icon`, image);
+                            }
+                            resolve();
+                        } catch (e) {
+                            reject(e);
+                        }
+                    }
+                });
+            });
+        }));
 
-    // Add symbol layer for markers
-    map.addLayer({
-        id: 'circle-background',
-        type: 'circle',
-        source: 'combined',
-        paint: {
-            'circle-color': '#ffffff',
-            'circle-opacity': 0.4,
-            'circle-radius': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                0, 20,     // At zoom level 0, radius is 4px
-                4, 12,     // At zoom level 4, radius is 6px
-                8, 10,     // At zoom level 8, radius is 8px
-                12, 40    // At zoom level 12, radius is 10px
-            ],
-            'circle-stroke-width': 0.3,
-            'circle-stroke-color': '#ffffff'
-        }
-    });
-
-    map.addLayer({
-        id: 'combined-layer',
-        type: 'symbol',
-        source: 'combined',
-        layout: {
-            'icon-image': [
-                'case',
-                ['==', ['get', 'bus', ['get', 'topics']], true], 'bus-icon',
-                ['==', ['get', 'river', ['get', 'topics']], true], 'river-icon',
-                ['==', ['get', 'mountain', ['get', 'topics']], true], 'mountain-icon',
-                ['==', ['get', 'wilderness', ['get', 'topics']], true], 'wilderness-icon',
-                ['==', ['get', 'trail', ['get', 'topics']], true], 'trail-icon',
-                ['==', ['get', 'lake', ['get', 'topics']], true], 'lake-icon',
-                ['==', ['get', 'forest', ['get', 'topics']], true], 'forest-icon',
-                ['==', ['get', 'desert', ['get', 'topics']], true], 'desert-icon',
-                ['==', ['get', 'road', ['get', 'topics']], true], 'road-icon',
-                ['==', ['get', 'camp', ['get', 'topics']], true], 'camp-icon',
-                ['==', ['get', 'none', ['get', 'topics']], true], 'none-icon',
-                'none-icon' // fallback icon
-            ],
-            'icon-size': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                0, 0.4,    // At zoom level 0, icons are 0.3x size
-                4, 0.5,    // At zoom level 4, icons are 0.4x size
-                8, 1.2,    // At zoom level 8, icons are 0.5x size
-                12, 2    // At zoom level 12, icons are 0.6x size
-            ],
-            'icon-allow-overlap': true
-        }
-    });
-
-    // Add click event for popups
-    map.on('click', 'combined-layer', (e) => {
-        const clickedLocation = e.features[0].properties.LocationName || "Unknown Location";
-        const featuresAtLocation = map.querySourceFeatures('combined', {
-            filter: ['==', ['get', 'LocationName'], clickedLocation]
+        // Add handler for missing images
+        map.on('styleimagemissing', (e) => {
+            if (!map.hasImage(e.id)) {
+                map.loadImage('assets/marker_logo-01.png', (error, image) => {
+                    if (!error && !map.hasImage(e.id)) {
+                        map.addImage(e.id, image);
+                    }
+                });
+            }
         });
 
-        // Track unique contexts to avoid duplicates
-        const seenContexts = new Set();
-        
-        // Build popup content
-        let entriesHTML = featuresAtLocation
-            .filter(f => {
-                const ctx = f.properties.context || "No context provided.";
-                // Only keep entries with contexts we haven't seen before
-                if (seenContexts.has(ctx)) {
-                    return false;
+        // Only add layers after images are loaded
+        map.addLayer({
+            id: 'circle-background',
+            type: 'circle',
+            source: 'combined',
+            paint: {
+                'circle-color': '#ffffff',
+                'circle-opacity': 0.4,
+                'circle-radius': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    0, 20,     // At zoom level 0, radius is 4px
+                    4, 12,     // At zoom level 4, radius is 6px
+                    8, 40,     // At zoom level 8, radius is 8px
+                    12, 100    // At zoom level 12, radius is 10px
+                ],
+                'circle-stroke-width': 0.3,
+                'circle-stroke-color': '#ffffff'
+            }
+        });
+
+        // Create a layer for each category instead of a combined layer
+        categories.forEach(cat => {
+            map.addLayer({
+                id: `${cat}-layer`,
+                type: 'symbol',
+                source: 'combined',
+                layout: {
+                    'icon-image': `${cat}-icon`,
+                    'icon-size': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        0, 0.4,
+                        4, 0.5,
+                        8, 1.2,
+                        12, 2
+                    ],
+                    'icon-allow-overlap': true
+                },
+                filter: cat === 'none' ? 
+                    [
+                        'all',
+                        ['has', 'topics'],
+                        [
+                            'all',
+                            ...categories
+                                .filter(c => c !== 'none')
+                                .map(c => [
+                                    '!=',
+                                    ['get', c, ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]],
+                                    true
+                                ])
+                        ]
+                    ] : 
+                    [
+                        'all',
+                        ['has', 'topics'],
+                        [
+                            'to-boolean',
+                            ['get', cat, ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]]
+                        ]
+                    ]
+            });
+
+            // Add click event for each layer
+            map.on('click', `${cat}-layer`, (e) => {
+                const clickedLocation = e.features[0].properties.LocationName || "Unknown Location";
+                handlePopup(e, clickedLocation);
+            });
+
+            // Add hover effects for each layer
+            map.on('mouseenter', `${cat}-layer`, () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on('mouseleave', `${cat}-layer`, () => {
+                map.getCanvas().style.cursor = '';
+            });
+        });
+
+        // Add this function after layer creation to update visibility
+        function updateLayerVisibility() {
+            const features = map.querySourceFeatures('combined');
+            const locationMap = new Map();
+            let noneCount = 0;
+            const maxNoneIcons = 20; // Adjust this number to control max "none" icons
+
+            // First pass: assign non-none categories with randomization
+            features.forEach(feature => {
+                const location = feature.properties.LocationName;
+                if (!locationMap.has(location)) {
+                    const topics = JSON.parse(feature.properties.topics || "{}");
+                    const activeCategories = categories
+                        .filter(cat => cat !== 'none' && topics[cat] === true);
+
+                    if (activeCategories.length > 0) {
+                        // Use random seed for consistent but random selection within this page load
+                        const hash = hashString(location);
+                        const selectedCategory = activeCategories[hash % activeCategories.length];
+                        locationMap.set(location, selectedCategory);
+                    }
                 }
-                seenContexts.add(ctx);
-                return true;
-            })
-            .map(f => {
-                const ctx = f.properties.context || "No context provided.";
-                const highlightedCtx = ctx.replace(new RegExp(clickedLocation, 'g'), `<mark>${clickedLocation}</mark>`);
-                const lit = f.properties.Literature || "No literature info.";
-                const topics = JSON.parse(f.properties.topics || "{}");
-                const themes = JSON.parse(f.properties.themes || "{}");
-                
-                // Get all true topics
-                const activeTopics = Object.entries(topics)
-                    .filter(([_, value]) => value === true)
-                    .map(([key]) => key.replace(/_/g, ' '))
-                    .join(', ') || 'None';
+            });
 
-                // Get all true themes
-                const activeThemes = Object.entries(themes)
-                    .filter(([_, value]) => value === true)
-                    .map(([key]) => key.replace(/_/g, ' '))
-                    .join(', ') || 'None';
-                
-                return `
-                    <div class="entry" style="margin-bottom:10px;">
-                        <hr style="border: 0; height: 1px; background: #ccc; margin: 10px 0;">
-                        <p><strong>Context:</strong> ${highlightedCtx}</p>
-                        <p><strong>Literature:</strong> ${lit}</p>
-                        <p><strong>Objects:</strong> ${activeTopics}</p>
-                        <p><strong>Themes:</strong> ${activeThemes}</p>
-                    </div>`;
-            }).join('');
+            // Second pass: assign 'none' category only if needed and within limit
+            features.forEach(feature => {
+                const location = feature.properties.LocationName;
+                if (!locationMap.has(location) && noneCount < maxNoneIcons) {
+                    const topics = JSON.parse(feature.properties.topics || "{}");
+                    const hasAnyCategory = categories
+                        .filter(cat => cat !== 'none')
+                        .some(cat => topics[cat] === true);
 
-        const popupHTML = `
-            <div class="popup-content">
-                <h2 style="margin: 0 0 8px 0;">${clickedLocation}</h2>
-                ${entriesHTML}
-            </div>`;
+                    if (!hasAnyCategory) {
+                        locationMap.set(location, 'none');
+                        noneCount++;
+                    }
+                }
+            });
 
-        popup
-            .setLngLat(e.lngLat)
-            .setHTML(popupHTML)
-            .addTo(map);
-    });
+            // Update visibility for each layer
+            categories.forEach(cat => {
+                const layerId = `${cat}-layer`;
+                const visibleLocations = Array.from(locationMap.entries())
+                    .filter(([_, category]) => category === cat)
+                    .map(([location, _]) => location);
 
-    // Cursor styling
-    map.on('mouseenter', 'combined-layer', () => {
-        map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'combined-layer', () => {
-        map.getCanvas().style.cursor = '';
-    });
+                map.setFilter(layerId, [
+                    'all',
+                    ['has', 'topics'],
+                    ['in', ['get', 'LocationName'], ['literal', visibleLocations]]
+                ]);
+            });
+        }
+
+        // Call updateLayerVisibility initially and when the source data changes
+        updateLayerVisibility();
+        map.on('sourcedata', (e) => {
+            if (e.sourceId === 'combined' && e.isSourceLoaded) {
+                updateLayerVisibility();
+            }
+        });
+
+        // Helper function for handling popups
+        function handlePopup(e, clickedLocation) {
+            const featuresAtLocation = map.querySourceFeatures('combined', {
+                filter: ['==', ['get', 'LocationName'], clickedLocation]
+            });
+
+            // Track unique contexts to avoid duplicates
+            const seenContexts = new Set();
+            
+            // Build popup content
+            let entriesHTML = featuresAtLocation
+                .filter(f => {
+                    const ctx = f.properties.context || "No context provided.";
+                    // Only keep entries with contexts we haven't seen before
+                    if (seenContexts.has(ctx)) {
+                        return false;
+                    }
+                    seenContexts.add(ctx);
+                    return true;
+                })
+                .map(f => {
+                    const ctx = f.properties.context || "No context provided.";
+                    const highlightedCtx = ctx.replace(new RegExp(clickedLocation, 'g'), `<mark>${clickedLocation}</mark>`);
+                    const lit = f.properties.Literature || "No literature info.";
+                    const topics = JSON.parse(f.properties.topics || "{}");
+                    const themes = JSON.parse(f.properties.themes || "{}");
+                    
+                    // Get all true topics
+                    const activeTopics = Object.entries(topics)
+                        .filter(([_, value]) => value === true)
+                        .map(([key]) => key.replace(/_/g, ' '))
+                        .join(', ') || 'None';
+
+                    // Get all true themes
+                    const activeThemes = Object.entries(themes)
+                        .filter(([_, value]) => value === true)
+                        .map(([key]) => key.replace(/_/g, ' '))
+                        .join(', ') || 'None';
+                    
+                    return `
+                        <div class="entry" style="margin-bottom:10px;">
+                            <hr style="border: 0; height: 1px; background: #ccc; margin: 10px 0;">
+                            <p><strong>Context:</strong> ${highlightedCtx}</p>
+                            <p><strong>Literature:</strong> ${lit}</p>
+                            <p><strong>Objects:</strong> ${activeTopics}</p>
+                            <p><strong>Themes:</strong> ${activeThemes}</p>
+                        </div>`;
+                }).join('');
+
+            const popupHTML = `
+                <div class="popup-content">
+                    <h2 style="margin: 0 0 8px 0;">${clickedLocation}</h2>
+                    ${entriesHTML}
+                </div>`;
+
+            popup
+                .setLngLat(e.lngLat)
+                .setHTML(popupHTML)
+                .addTo(map);
+        }
+
+    } catch (error) {
+        console.error('Failed to load one or more images:', error);
+    }
 
     // Set up category filters
     categories.forEach(cat => {
@@ -236,46 +362,40 @@ map.on('load', () => {
 
 // Filter update function
 function updateFilters() {
-    const activeCats = categories.filter(cat => 
-        document.getElementById(`filter-${cat}`)?.checked
-    );
-
     const activeThemes = themes.filter(theme =>
         document.getElementById(`filter-${theme}`)?.checked
     );
 
-    if (activeCats.length === 0 && activeThemes.length === 0) {
-        map.setFilter('combined-layer', ['in', 'id', '']);
-        return;
-    }
+    categories.forEach(cat => {
+        const isActive = document.getElementById(`filter-${cat}`)?.checked;
+        const layer = `${cat}-layer`;
+        
+        if (!isActive) {
+            map.setFilter(layer, ['in', 'id', '']);
+            return;
+        }
 
-    const filterExpr = ['all'];
-    
-    // Add topic filters if any are selected
-    if (activeCats.length > 0) {
-        const topicFilter = ['any'];
-        activeCats.forEach(cat => {
-            if (cat === 'none') {
-                topicFilter.push(['!', ['any',
-                    ...categories
-                        .filter(c => c !== 'none')
-                        .map(c => ['==', ['get', c, ['get', 'topics']], true])
-                ]]);
-            } else {
-                topicFilter.push(['==', ['get', cat, ['get', 'topics']], true]);
-            }
-        });
-        filterExpr.push(topicFilter);
-    }
+        const filterExpr = [
+            'all',
+            ['has', 'topics'],
+            [
+                'to-boolean',
+                ['get', cat, ['coalesce', ['object', ['get', 'topics']], ['literal', {}]]]
+            ]
+        ];
 
-    // Add theme filters if any are selected
-    if (activeThemes.length > 0) {
-        const themeFilter = ['any'];
-        activeThemes.forEach(theme => {
-            themeFilter.push(['==', ['get', theme, ['get', 'themes']], true]);
-        });
-        filterExpr.push(themeFilter);
-    }
+        // Add theme filters if any are selected
+        if (activeThemes.length > 0) {
+            const themeFilter = ['any'];
+            activeThemes.forEach(theme => {
+                themeFilter.push([
+                    'to-boolean',
+                    ['get', theme, ['coalesce', ['object', ['get', 'themes']], ['literal', {}]]]
+                ]);
+            });
+            filterExpr.push(themeFilter);
+        }
 
-    map.setFilter('combined-layer', filterExpr);
+        map.setFilter(layer, filterExpr);
+    });
 }

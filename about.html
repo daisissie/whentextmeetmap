@@ -29,10 +29,14 @@
     <div class="about-main">
       <h2>About</h2>
       <p>
-        This project investigates how non-spatial data—specifically memories, diaries, and personal narratives—can be transformed into spatial representations. By mapping subjective, text-based experiences, it reveals hidden patterns and emotional geographies within datasets traditionally viewed as purely textual. Using three iconic books, <em>On the Road</em> by Jack Kerouac, <em>Walden</em> by Henry David Thoreau, and <em>Into the Wild</em> by Jon Krakauer, as data, the project treats literature itself as a form of memory.
+        This project explores how non-spatial data, specifically memories, diaries, and personal narratives, can be transformed into spatial representations. By mapping subjective, text-based experiences, it reveals hidden patterns and emotional geographies within datasets traditionally viewed as purely textual. Using three iconic books, <em>On the Road</em> by Jack Kerouac, <em>Walden</em> by Henry David Thoreau, and <em>Into the Wild</em> by Jon Krakauer, as data, the project treats literature itself as a form of memory.
       </p>
-      <p>
-        Memories, whether drawn from oral histories, journals, or photographs, are inherently personal and often blurry. Yet within their subjectivity lies rich insight into how individuals relate to space—what they notice, how they feel, and how places shape their identities. These narratives do more than point to physical locations; they carry emotional and sensory weight, offering a deeper understanding of lived experience and human perception of place.
+      <p style="font-size: 1.5em;">
+        Reading can go beyond pages.
+        </p>
+        <p>
+        Using lilterature as date as starting point. Memories, whether drawn from oral histories, journals, or photographs, are inherently personal and often blurry. Yet within their subjectivity lies rich insight into how individuals relate to space—what they notice, how they feel, and how places shape their identities.
+        These narratives do more than point to physical locations. They carry emotional and sensory weight, offering a deeper understanding of lived experience and human perception of place.
       </p>
       <p>
         Inspired by the surrealist art game Exquisite Corpse, this interactive map functions like a digital coffee table book. Visitors are invited to click through a landscape of stories, discovering fragmented yet vivid memory-texts. Each entry reveals a moment, a mood, or a scene—sometimes contradictory, sometimes unexpected—emphasizing the layered and diverse ways people engage with space.
@@ -48,7 +52,9 @@
         <img src="assets/Methdology.png" alt="Methodology Diagram" style="max-width: 60%; height: auto;">
       </div>
       <p>
-        This project follows an integrated pipeline that combines Natural Language Processing, GPT analysis, and the Google Maps API to spatially visualize narrative data from literatrue.      </p>
+        The platform was built through a reproducible pipeline. First, spaCy tokenizer and label text chunks to isolate candidate place names. Next, the Large Language Model refines and disambiguates these references across hundreds of pages. Third, the Google Maps API geocodes each validated name into precise latitude–longitude pairs, while capturing contextual snippets. Finally, Mapbox GL renders the data with dynamic clustering, zoom-based icon scaling, and scrollable pop ups. Custom scripts automate chunking, thematic filtering, and error handling, ensuring consistency across all three works. This process transforms words into structured spatial data, creating an interactive environment for literary exploration. 
+
+      </p>
     </div>
   </div>
 

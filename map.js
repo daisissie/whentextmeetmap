@@ -1,5 +1,5 @@
-// Mapbox access token
-mapboxgl.accessToken = 'pk.eyJ1IjoiZGFpc2lzc2llIiwiYSI6ImNtN2Nyb2F3bzB2N3gyam9zenUyamV4eXIifQ.zfJE3IoB71zY8FesqhERag';
+// Mapbox access token — loaded from config.js (gitignored)
+mapboxgl.accessToken = window.MAPBOX_TOKEN;
 
 // Global flag for toggling point visibility
 let showAllPoints = false;

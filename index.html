@@ -36,17 +36,13 @@
       <h2>Literature as Data</h2>
       <p>Explore stories by place instead of page</p>
       <h2>Data Input</h2>
-      <div>
-        <p style="font-size: 0.8em; white-space: nowrap;"><strong>On the Road</strong> by Jack Kerouac</p>
-        <p style="font-size: 0.8em; white-space: nowrap;"><strong>Walden</strong> by Henry David Thoreau</p>
-        <p style="font-size: 0.8em; white-space: nowrap;"><strong>Into the Wild</strong> by Jon Krakauer</p>
-      </div>
-
-      <!-- Upload Your Text -->
-      <h2>Your Text</h2>
-      <button id="upload-text-btn" class="toggle-button">Upload Text File</button>
-      <input type="file" id="text-file-input" accept=".txt" style="display:none">
-      <div id="upload-status"></div>
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        
+          <p style="font-size: 0.8em; white-space: nowrap;"><strong>On the Road</strong> by Jack Kerouac</p>
+          <p style="font-size: 0.8em; white-space: nowrap;"><strong>Walden</strong> by Henry David Thoreau</p>
+          <p style="font-size: 0.8em; white-space: nowrap;"><strong>Into the Wild</strong> by Jon Krakauer</p>
+        
+      </form>
       
       <!-- Category Filters -->
       <div class="categories-filter">
@@ -75,7 +71,7 @@
     </div>
   </div>
 
-  <script src="config.js"></script>
+  <!-- External JS File -->
   <script src="map.js"></script>
 </body>
 </html>

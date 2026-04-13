@@ -1,0 +1,14 @@
+# Literary Geography Pipeline — dependencies
+# Install with: pip install -r requirements.txt
+
+# Local LLM inference on Apple Silicon
+mlx-lm>=0.20.0
+
+# Multilingual embeddings (BGE-M3) — compatible with transformers 5.x
+sentence-transformers>=3.0.0
+
+# HTTP requests (Nominatim geocoding)
+requests>=2.31.0
+
+# Numerics (cosine similarity)
+numpy>=1.26.0
